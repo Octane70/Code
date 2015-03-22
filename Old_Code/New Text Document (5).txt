@@ -1,0 +1,227 @@
+# wall following robot program
+# initialise RPIO and variables
+import sys
+import time
+#import RPi.GPIO as GPIO
+import RPIO
+from RPIO import PWM as PWM
+#import RPIO.PWM as PWM
+#import RPi.GPIO as GPIO
+
+
+#import PRIO.PWM as PWM
+#use bcm not pin no
+RPIO.setmode(RPIO.BCM)
+#GPIO.setmode(GPIO.BCM)
+
+#set RPIO to use
+RPIO_MOTOR1 = 7
+RPIO_MOTOR2 = 8
+RPIO_SERVO = 9
+RPIO_TRIGGER = 11
+RPIO_ECHO    = 25
+lmotor=0
+rmotor=0
+
+RPIO.setup(RPIO_TRIGGER,RPIO.OUT)  # Trigger is output
+RPIO.setup(RPIO_ECHO,RPIO.IN)      # Echo input
+RPIO.setup(RPIO_MOTOR1,RPIO.OUT)
+RPIO.setup(RPIO_MOTOR2,RPIO.OUT)
+RPIO.setup(RPIO_SERVO,RPIO.OUT)
+#servo=PWM.Servo()
+PWM.setup(1)
+PWM.init_channel(1,20000)
+#PWM.init_channel(2,20000)
+#PWM.init_channel(RPIO_MOTOR2)
+#PWM.init_channel(RPIO_SERVO)
+
+#a = RPIO.PWM(RPIO_MOTOR1, 50) # a=motor 1
+#b = RPIO.PWM(RPIO_MOTOR2, 50) # b=motor 2
+#s = RPIO.PWM(RPIO_SERVO, 50) # c=motor 1
+centre=0 # =pwm to centre servo
+left=-90 # =pwm % for 90 deg left servo
+right=90 # =pwm for 90 deg right servo
+RPIO.output(RPIO_TRIGGER, False) #set trigger low
+RPIO.output(RPIO_MOTOR1, False)
+RPIO.output(RPIO_MOTOR2, False)
+
+#a.start(0) #start motor1 @ 0% power
+#b.start(0) #motor 2 0
+#s.start(centre) # centre servo
+
+#####################################
+## end of setup start of functions ##
+#####################################
+#motor_no: 1=M1 2=M2 3 or anything else=both
+def changespeed(motor_no,current_speed,set_speed,step_size,delay):
+    for counter in range (current_speed, set_speed, step_size):
+        pwmmotor=int(round(counter*199,-1))
+        print(pwmmotor)
+        if (motor_no != 2):
+            PWM.add_channel_pulse(1,RPIO_MOTOR1,0,pwmmotor)
+            
+        if (motor_no != 1):
+            PWM.add_channel_pulse(1,RPIO_MOTOR2,0,pwmmotor)
+        time.sleep(delay)
+    return set_speed
+
+#p.stop()
+#RPIO.cleanup()
+
+def measuredistance():
+    global distance
+    start=0
+    stop=0
+    # This function measures a distance
+    RPIO.output(RPIO_TRIGGER, True)
+    time.sleep(0.00001)
+    RPIO.output(RPIO_TRIGGER, False)
+    start = time.time()
+
+    while RPIO.input(RPIO_ECHO)==0:
+        start = time.time()
+
+    while RPIO.input(RPIO_ECHO)==1:
+        stop = time.time()
+
+    elapsed = stop-start
+    distance = (elapsed * 34300)/2
+    print("distance")
+    print(distance)
+    
+    return distance
+
+def alignwithwall():
+    point_servo(left) #turn servo left
+    time.sleep(1)
+    measuredistance() #return distance in cm 
+    dista=distance
+    time.sleep(0.5) # wait for travel forward before re measure
+    measuredistance()
+    distb=distance
+    if distb < dista or distb <12:
+        changespeed(2,100,70,-1,0.02) #right wheel 70% so turning right slowly
+        measuredistance()
+        while distance < 12: #as turning right wait until >12 cm from wall
+            measuredistance()
+            time.sleep(0.1)
+            rmotor=70
+            return rmotor
+    if rmotor == 70: # reset to full speed now level ish
+        changespeed(2,70,100,1,0.02)
+        rmotor=100
+    measuredistance()
+    dista=distance
+    time.sleep(0.5)
+    measuredistance()
+    distb=distance
+    if distb > dista or distb >12:
+        changespeed(1,100,70,-1,0.02) #left wheel 70% so turning left slowly
+        measuredistance()
+        while distance > 12: #as turning left wait until =12cm or less from wall
+            measuredistance()
+            time.sleep(0.1)
+            lmotor=70
+    if lmotor == 70: # reset to full speed now level ish
+        changespeed(1,70,100,1,0.02)
+        lmotor=100
+
+def point_servo(degrees): # -90 to plus 90 degrees 0 = centre
+    degrees = degrees+90
+    pwmval=int(round((degrees*9.167 +800), -1))
+    PWM.add_channel_pulse(1,RPIO_SERVO,0,pwmval)
+
+    #servo.set_servo(RPIO_SERVO,pwmval)
+    print(pwmval)
+    print(degrees)
+        
+def move_forward(ammount):
+    changespeed(3,0,100,1,0.005)
+    time.sleep(ammount)
+    changespeed(3,100,0,-1,0.005)
+
+def turn_left(ammount):
+    changespeed(2,0,ammount,1,0.02)
+    
+def turn_right(ammount):
+    changespeed(1,0,ammount,1,0.02)
+    
+# main part
+while 1:
+    PWM.add_channel_pulse(1,RPIO_MOTOR1,0,0)
+    PWM.add_channel_pulse(1,RPIO_MOTOR2,0,0)
+    move_dir=raw_input("f forward l left r rightx to cleanup")
+    print(move_dir)
+    move_ammount=int(raw_input("for time in seconcs or degrees "))
+    print(move_ammount)
+    if move_dir=="f":
+        move_forward(move_ammount)
+    if move_dir=="l":
+        move_ammount=int(move_ammount)
+        turn_left(move_ammount)
+    if move_dir=="r":
+        move_ammount=int(move_ammount)
+        turn_right(move_ammount)
+    if move_dir=="x":
+        PWM.clear_channel_gpio(1,RPIO_MOTOR1)
+        PWM.clear_channel_gpio(1,RPIO_MOTOR2)
+        PWM.cleanup()
+        RPIO.cleanup()
+        print("cleanup done, ctrl x c tp quit")
+    
+
+##    pwmval=int(raw_input("enter deg "))
+    #pwmval=pwmval+90
+    #pwmval=int(round((pwmval*4.38 +370), -1))
+##    PWM.add_channel_pulse(1,RPIO_SERVO,0,pwmval)
+#    pwmval=pwmval+90
+#    pwmval=int(4.38*pwmval)/10
+#    pwmval=pwmval*10 +370
+#    servo.set_servo(RPIO_SERVO,pwmval)
+##    print(pwmval)
+
+while 1:
+    print("blah")
+    measuredistance()
+    
+    time.sleep(1)
+
+print("main part")
+for x in range (-90,90,1):
+    point_servo(x)
+    print(x)
+    time.sleep(0.1)
+for x in range (90,-90,-1):
+    point_servo(x)
+    print(x)
+    time.sleep(0.1)
+    
+changespeed(3,0,100,1,0.02) # accelerate from 0 to 100% step 1% delay 0.02 S
+#lmotor=100
+#rmotor=100
+print("start 5 sec sleep")
+measuredistance()
+print(distance)
+time.sleep(5)
+print("end sleep")
+point_servo(centre)
+measuredistance()
+dista=distance
+if dista <= 25: # work out to point straight at wall then turn 90 deg right
+    changespeed(3,100,0,-1,0.005)# stop both motors quickly 0.5 sec
+    measuredistance()
+    dista=distance
+    time.sleep(0.5)
+    measuredistance()
+    distb=distance
+    
+    point_servo(left)
+alignwithwall()
+PWM.clear_channel_gpio(1,RPIO_MOTOR1)
+PWM.clear_channel_gpio(1,RPIO_MOTOR2)
+
+PWM.cleanup()
+RPIO.cleanup()
+    
+    
+    
