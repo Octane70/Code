@@ -9,6 +9,9 @@ import serial
 # Steven Jacobs -- Aug 2013
 # https://github.com/FRC4564/Maestro/
 #
+# Rob Czepil -- Mar 2015. Added UART serial control.
+# https://github.com/Octane70/Code/Maestro/modules/
+#
 # These functions provide access to many of the Maestro's capabilities using the
 # Pololu serial protocol
 #
@@ -18,6 +21,11 @@ class Controller:
     # Be sure the Maestro is configured for "USB Dual Port" serial mode.
     # "USB Chained Mode" may work as well, but hasn't been tested.
     #
+    # When connected via UART, the Maestro creates two virtual serial ports
+    # /dev/ttyAMA0 for commands and /dev/ttyAMA1 for communications.
+    # Be sure the Maestro in configured in "UART auto detect baudrate"
+    # serial mode.
+    #
     # Pololu protocol allows for multiple Maestros to be connected to a single
     # communication channel. Each connected device is then indexed by number.
     # This device number defaults to 0x0C (or 12 in decimal), which this module
@@ -26,9 +34,16 @@ class Controller:
     # object. Ports will typically start at 0 and count by twos.  So with two
     # controllers ports 0 and 2 would be used.
     def __init__(self,port=0):
-        # Open the command port
-        ttyStr = '/dev/ttyACM' + str(port)
+        # Open the command port for Serial USB
+        #ttyStr = '/dev/ttyACM' + str(port)
+        #self.usb = serial.Serial(ttyStr)
+        
+        # Open the command port for Serial UART
+        ttyStr = '/dev/ttyAMA' + str(port)
         self.usb = serial.Serial(ttyStr)
+        # Baudrate for Serial UART
+        self.usb.baudrate=9600
+        
         # Command lead-in and device 12 are sent for each Pololu serial commands.
         self.PololuCmd = chr(0xaa) + chr(0xc)
         # Track target position for each servo. The function isMoving() will
