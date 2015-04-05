@@ -8,10 +8,16 @@ import sys
 import Adafruit_DHT
 import os
 import spidev
+import RPi.GPIO as gpio
 
 # Open SPI bus
 spi = spidev.SpiDev()
 spi.open(0,0)
+
+# Initiate gpio's for relay
+#gpio.setmode(gpio.BCM)
+#gpio.setup(12, gpio.OUT) # relay 1
+#gpio.setup(16, gpio.OUT) # relay 2
 
 # Function to read SPI data from MCP3008 chip
 def ReadChannel(channel):
@@ -20,17 +26,20 @@ def ReadChannel(channel):
    return data
 
 lcd = Adafruit_CharLCD()
-moisture = ReadChannel(2)
-
 lcd.begin(16, 1)
 
-# Import Humidity and Temperature from (DHT22, gpio pin 4)
+# Import Humidity and Temperature from AdafruitDHT
 humidity, temperature = Adafruit_DHT.read_retry(22, 4)
 
-while 1:
+while True:
+    
+    # Import moisture from moisture sensor
+    moisture = ReadChannel(2)
     lcd.clear()
     lcd.message(datetime.now().strftime('%H:%M:%S '))
     lcd.message ('T=%0.1fC\n' % temperature)
     lcd.message ('H=%0.1f%%' % humidity)
     lcd.message ('  M=%d' % moisture)
     sleep(1)
+
+gpio.cleanup()	
