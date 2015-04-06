@@ -29,10 +29,12 @@ lcd = Adafruit_CharLCD()
 lcd.begin(16, 1)
 
 # Import Humidity and Temperature from AdafruitDHT
-humidity, temperature = Adafruit_DHT.read_retry(22, 4)
-
+#humidity, temperature = Adafruit_DHT.read_retry(22, 4)
+counter = 0
 while True:
-    
+   
+    if counter % 30 == 0:
+        humidity, temperature = Adafruit_DHT.read_retry(22, 4)
     # Import moisture from moisture sensor
     moisture = ReadChannel(2)
     lcd.clear()
@@ -40,6 +42,7 @@ while True:
     lcd.message ('T=%0.1fC\n' % temperature)
     lcd.message ('H=%0.1f%%' % humidity)
     lcd.message ('  M=%d' % moisture)
+    counter += 1
     sleep(1)
 
 gpio.cleanup()	
