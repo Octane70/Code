@@ -1,4 +1,5 @@
 #!/usr/bin/python
+#Version 0.1
 
 from Adafruit_CharLCD import Adafruit_CharLCD
 from subprocess import *
@@ -27,12 +28,11 @@ def ReadChannel(channel):
 
 lcd = Adafruit_CharLCD()
 lcd.begin(16, 1)
-
-# Import Humidity and Temperature from AdafruitDHT
-#humidity, temperature = Adafruit_DHT.read_retry(22, 4)
 counter = 0
+
 while True:
    
+   # Import Humidity and Temperature from AdafruitDHT
     if counter % 30 == 0:
         humidity, temperature = Adafruit_DHT.read_retry(22, 4)
     # Import moisture from moisture sensor
