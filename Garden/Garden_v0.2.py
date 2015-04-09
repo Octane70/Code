@@ -7,7 +7,7 @@
 
 from Adafruit_CharLCD import Adafruit_CharLCD
 from subprocess import *
-from time import sleep, strftime, time
+from time import sleep, strftime
 from datetime import datetime
 import sys
 import Adafruit_DHT
@@ -28,18 +28,22 @@ gpio.setup(16, gpio.OUT) # relay 2
 moisture_min = 400
 moisture_max = 600
 
-#Watering times
-a = datetime.datetime(100,1,1,7,00,00) #7:00:00
+print ('Watering times:')
+a = datetime(100,1,1,7,00,00) #7:00:00
 morning_on = a.time()
+print a.time()
 
-b = datetime.datetime(100,1,1,7,30,00) #7:30:00
+b = datetime(100,1,1,7,30,00) #7:30:00
 morning_off = b.time()
+print b.time()
 
-c = datetime.datetime(100,1,1,19,00,00) #19:00:00
+c = datetime(100,1,1,19,00,00) #19:00:00
 evening_on = c.time()
+print c.time()
 
-d = datetime.datetime(100,1,1,19,30,00) #19:30:00
+d = datetime(100,1,1,19,30,00) #19:30:00
 evening_off = d.time()
+print d.time()
 
 # Function to read SPI data from MCP3008 chip
 def ReadChannel(channel):
@@ -77,15 +81,15 @@ while True:
        relay_ch1_off()
     #Time controlled irrigation relay_ch2
     #Daytime and evening irrigation time
-    if datetime.now >= morning_on and datetime.now <= morning_off:
+    if datetime.now().time() >= morning_on and datetime.now().time() <= morning_off:
        relay_ch2_on()
-    elif datetime.now >= evening_on and datetime.now <= evening_off:
+    elif datetime.now().time() >= evening_on and datetime.now().time() <= evening_off:
        relay_ch2_on()
     else:
        relay_ch2_off()
               
     lcd.clear()
-    lcd.message(datetime.now().strftime('%H:%M:%S '))
+    lcd.message(datetime.now().time().strftime('%H:%M:%S '))
     lcd.message ('T=%0.1fC\n' % temperature)
     lcd.message ('H=%0.1f%%' % humidity)
     lcd.message ('  M=%d' % moisture)
