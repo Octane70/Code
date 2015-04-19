@@ -48,20 +48,23 @@ evening_off = d.time()
 print d.time()
 
 #GUI window
-def gui_display():   
-   root.title("Irrigation Display")
-   root.geometry("400x200+350+340")
-   L1 = Label(root, text="Temperature=").grid(row=0,column=0,sticky=W)
-   L2 = Label(root, text="Humidity=").grid(row=1,column=0,sticky=W)
-   L3 = Label(root, text="Moisture=").grid(row=2,column=0,sticky=W)
-   V1 = Label(root, text="25.2C").grid(row=0,column=1,sticky=W)
-   V2 = Label(root, text="50.5%").grid(row=1,column=1,sticky=W)
-   V3 = Label(root, text="700").grid(row=2,column=1,sticky=W)
-   root.after(1000, gui_display)
+root = Tk()   
+root.title("Irrigation Display")
+root.geometry("400x200+350+340")
+Label(root, text="Temperature=").grid(row=0,column=0,sticky=W)
+Label(root, text="Humidity=").grid(row=1,column=0,sticky=W)
+Label(root, text="Moisture=").grid(row=2,column=0,sticky=W)
+temp = StringVar()
+hum = StringVar()
+moist = StringVar()
+   
+def gui_updates():
+   Label(root, textvariable=temp).grid(row=0,column=1,sticky=W)
+   Label(root, textvariable=hum).grid(row=1,column=1,sticky=W)
+   Label(root, textvariable=moist).grid(row=2,column=1,sticky=W)
+   root.after(1000, gui_updates)
 
-root = Tk()
-root.after(1000, gui_display)    
-#root.mainloop()
+root.after(1000, gui_updates)    
 
 # Function to read SPI data from MCP3008 chip
 def ReadChannel(channel):
@@ -85,7 +88,11 @@ lcd = Adafruit_CharLCD()
 lcd.begin(16, 1)
 counter = 0
 
-while True:
+def updates():
+    global counter
+    global temperature
+    global humidity
+    global moisture
        
     #Import Humidity and Temperature from AdafruitDHT // 30 second refresh rate
     if counter % 30 == 0:
@@ -105,20 +112,23 @@ while True:
        relay_ch2_on()
     else:
        relay_ch2_off()
-       
+
+    #LCD updates  
     lcd.clear()
     lcd.message(datetime.now().time().strftime('%H:%M:%S '))
     lcd.message ('T=%0.1fC\n' % temperature)
     lcd.message ('H=%0.1f%%' % humidity)
     lcd.message ('  M=%d' % moisture)
+    #GUI updates
+    temp.set ('%0.1fC' % temperature)
+    hum.set ('%0.1f%%' % humidity)
+    moist.set ('%d' % moisture)       
     counter += 1
-    sleep(1)
-    root.after(1000, gui_display)
-    root.mainloop() 
+    root.after(1000, updates)
 
-    
-    
+root.after(1000, updates)   
+
+root.mainloop() 
+
 #gpio.output(12, False) #purple // 1pwm
-   
-
 gpio.cleanup()	
