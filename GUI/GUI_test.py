@@ -6,15 +6,6 @@ display = Tk()
 time1 = ''
 display.title("Irrigation Display")
 display.geometry("400x200+350+340")
-<<<<<<< HEAD
-L1 = Label(display, text="Temperature=").grid(row=0,column=0,sticky=W)
-L2 = Label(display, text="Humidity=").grid(row=1,column=0,sticky=W)
-L3 = Label(display, text="Moisture=").grid(row=2,column=0,sticky=W)
-V1 = Label(display, text="25.2C").grid(row=0,column=1,sticky=W)
-V2 = Label(display, text="50.5%").grid(row=1,column=1,sticky=W)
-V3 = Label(display, text="700").grid(row=2,column=1,sticky=W)
-
-=======
 L1 = Label(display, text="Temperature =").grid(row=0,column=0,sticky=W)
 L2 = Label(display, text="Humidity =").grid(row=1,column=0,sticky=W)
 L3 = Label(display, text="Moisture =").grid(row=2,column=0,sticky=W)
@@ -25,7 +16,6 @@ B1 = Button(display, text ="Irrigation On") .grid(row=3,column=0,sticky=W)
 B2 = Button(display, text ="Irrigation Off") .grid(row=3,column=1,sticky=W)
 clock = Label(display, font=('times', 20, 'bold'), bg='green')
 clock.grid(row=4,column=0,sticky=W)
->>>>>>> 7d3a1fcbf3ef8139e532fc0c2d17d77dd1c0eabf
 
 def tick():
     global time1
