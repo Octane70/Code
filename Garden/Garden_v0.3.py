@@ -1,5 +1,5 @@
 #!/usr/bin/python
-#Version 0.2
+#Version 0.3
 
 #0 ~300 : dry soil
 #300~700 : humid soil
@@ -9,12 +9,13 @@ from Adafruit_CharLCD import Adafruit_CharLCD
 from subprocess import *
 from time import sleep, strftime
 from datetime import datetime
-from Tkinter import *
+from Tkinter import Tk
 import sys
 import Adafruit_DHT
 import os
 import spidev
 import RPi.GPIO as gpio
+
 
 # Open SPI bus
 spi = spidev.SpiDev()
@@ -46,6 +47,23 @@ d = datetime(100,1,1,19,30,00) #19:30:00
 evening_off = d.time()
 print d.time()
 
+#GUI window
+def gui_display():   
+   root.title("Irrigation Display")
+   root.geometry("400x200+350+340")
+   L1 = Label(root, text="Temperature=")
+   L1 = .grid(row=0,column=0,sticky=W)
+   L2 = Label(root, text="Humidity=").grid(row=1,column=0,sticky=W)
+   L3 = Label(root, text="Moisture=").grid(row=2,column=0,sticky=W)
+   V1 = Label(display, text="25.2C", bd =5).grid(row=0,column=1,sticky=W)
+   V2 = Label(display, text="50.5%", bd =5).grid(row=1,column=1,sticky=W)
+   V3 = Label(display, text="700", bd =5).grid(row=2,column=1,sticky=W)
+   root.after(10, gui_display)
+
+root = Tk()
+root.after(10, gui_display)    
+root.mainloop()
+
 # Function to read SPI data from MCP3008 chip
 def ReadChannel(channel):
    adc = spi.xfer2([1,(8+channel)<<4,0])
@@ -69,7 +87,7 @@ lcd.begin(16, 1)
 counter = 0
 
 while True:
-   
+       
     #Import Humidity and Temperature from AdafruitDHT // 30 second refresh rate
     if counter % 30 == 0:
         humidity, temperature = Adafruit_DHT.read_retry(22, 4)
@@ -96,19 +114,12 @@ while True:
     lcd.message ('  M=%d' % moisture)
     counter += 1
     sleep(1)
+    #root.after(1000, gui_display)
+    #root.mainloop() 
 
-    #display = Tk()
-    #display.title("Irrigation Display")
-    #display.geometry("400x200+350+340")
-    #L1 = Label(display, text="Temperature=").grid(row=0,column=0,sticky=W)
-    #L2 = Label(display, text="Humidity=").grid(row=1,column=0,sticky=W)
-    #L3 = Label(display, text="Moisture=").grid(row=2,column=0,sticky=W)
-    #V1 = Label(display, textvariable=temperature).grid(row=0,column=1,sticky=W)
-    #V2 = Label(display, textvariable=humidity).grid(row=1,column=1,sticky=W)
-    #V3 = Label(display, textvariable=moisture).grid(row=2,column=1,sticky=W)
-    #display.mainloop()
     
     
 #gpio.output(12, False) #purple // 1pwm
-  
+   
+
 gpio.cleanup()	
