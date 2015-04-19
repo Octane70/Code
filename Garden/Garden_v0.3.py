@@ -9,7 +9,7 @@ from Adafruit_CharLCD import Adafruit_CharLCD
 from subprocess import *
 from time import sleep, strftime
 from datetime import datetime
-from Tkinter import Tk
+from Tkinter import *
 import sys
 import Adafruit_DHT
 import os
@@ -51,18 +51,17 @@ print d.time()
 def gui_display():   
    root.title("Irrigation Display")
    root.geometry("400x200+350+340")
-   L1 = Label(root, text="Temperature=")
-   L1 = .grid(row=0,column=0,sticky=W)
+   L1 = Label(root, text="Temperature=").grid(row=0,column=0,sticky=W)
    L2 = Label(root, text="Humidity=").grid(row=1,column=0,sticky=W)
    L3 = Label(root, text="Moisture=").grid(row=2,column=0,sticky=W)
-   V1 = Label(display, text="25.2C", bd =5).grid(row=0,column=1,sticky=W)
-   V2 = Label(display, text="50.5%", bd =5).grid(row=1,column=1,sticky=W)
-   V3 = Label(display, text="700", bd =5).grid(row=2,column=1,sticky=W)
-   root.after(10, gui_display)
+   V1 = Label(root, text="25.2C").grid(row=0,column=1,sticky=W)
+   V2 = Label(root, text="50.5%").grid(row=1,column=1,sticky=W)
+   V3 = Label(root, text="700").grid(row=2,column=1,sticky=W)
+   root.after(1000, gui_display)
 
 root = Tk()
-root.after(10, gui_display)    
-root.mainloop()
+root.after(1000, gui_display)    
+#root.mainloop()
 
 # Function to read SPI data from MCP3008 chip
 def ReadChannel(channel):
@@ -114,8 +113,8 @@ while True:
     lcd.message ('  M=%d' % moisture)
     counter += 1
     sleep(1)
-    #root.after(1000, gui_display)
-    #root.mainloop() 
+    root.after(1000, gui_display)
+    root.mainloop() 
 
     
     
