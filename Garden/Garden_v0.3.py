@@ -1,5 +1,5 @@
 #!/usr/bin/python
-#Version 0.3
+#Version v0.3
 
 #0 ~300 : dry soil
 #300~700 : humid soil
@@ -62,9 +62,6 @@ def gui_updates():
    Label(root, textvariable=temp).grid(row=0,column=1,sticky=W)
    Label(root, textvariable=hum).grid(row=1,column=1,sticky=W)
    Label(root, textvariable=moist).grid(row=2,column=1,sticky=W)
-   root.after(1000, gui_updates)
-
-root.after(1000, gui_updates)    
 
 # Function to read SPI data from MCP3008 chip
 def ReadChannel(channel):
@@ -125,10 +122,9 @@ def updates():
     moist.set ('%d' % moisture)       
     counter += 1
     root.after(1000, updates)
-
+    
+root.after(1000, gui_updates)
 root.after(1000, updates)   
 
 root.mainloop() 
-
-#gpio.output(12, False) #purple // 1pwm
 gpio.cleanup()	
