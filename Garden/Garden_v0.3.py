@@ -54,11 +54,12 @@ root.geometry("400x200+350+340")
 Label(root, text="Temperature=").grid(row=0,column=0,sticky=W)
 Label(root, text="Humidity=").grid(row=1,column=0,sticky=W)
 Label(root, text="Moisture=").grid(row=2,column=0,sticky=W)
+#Frame(height=2, bd=1, relief=SUNKEN).grid(row=3,column=0,sticky=W)
 temp = StringVar()
 hum = StringVar()
 moist = StringVar()
    
-def gui_updates():
+def gui_widgets():
    Label(root, textvariable=temp).grid(row=0,column=1,sticky=W)
    Label(root, textvariable=hum).grid(row=1,column=1,sticky=W)
    Label(root, textvariable=moist).grid(row=2,column=1,sticky=W)
@@ -123,7 +124,7 @@ def updates():
     counter += 1
     root.after(1000, updates)
     
-root.after(1000, gui_updates)
+gui_widgets()
 root.after(1000, updates)   
 
 root.mainloop() 
