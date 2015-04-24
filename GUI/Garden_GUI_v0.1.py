@@ -32,6 +32,8 @@ L16 = Label(display, text ="Moisture Max").grid(row=20, column=0, sticky=W)
 L17 = Label(display, text ="Camera 1").grid(row=0, column=20, sticky=W)
 L18 = Label(display, text ="Camera 2").grid(row=18, column=20, sticky=W)
 #Text
+#def retrieve_input():
+
 T1 = Text(display, width=10, height=1)
 T1.insert("1.0", "07:00\n")
 T1.grid(row=15, column=1, sticky=W)
@@ -57,14 +59,68 @@ T6.insert("1.0", "600\n")
 T6.grid(row=20, column=1, sticky=W)
 
 #Buttons
-B1=Button(display, text="On", width=4, height=1).grid(row=10, column=1, sticky=W)
-B2=Button(display, text="On", width=4, height=1).grid(row=13, column=1, sticky=W)
-B3=Button(display, text="Enter", width=4, height=1).grid(row=15, column=3, sticky=W) 
-B4=Button(display, text="Enter", width=4, height=1).grid(row=16, column=3, sticky=W)
-B5=Button(display, text="Enter", width=4, height=1).grid(row=17, column=3, sticky=W)
-B6=Button(display, text="Enter", width=4, height=1).grid(row=18, column=3, sticky=W)
-B7=Button(display, text="Enter", width=4, height=1).grid(row=19, column=3, sticky=W)
-B8=Button(display, text="Enter", width=4, height=1).grid(row=20, column=3, sticky=W)
+def b1_on_off():
+    if B1["text"] == "On":
+        B1["text"] = "Off"
+        print "timer Off"
+    if frame2["bg"] == "red":
+        frame2["bg"] = "black"
+    else:
+         B1["text"] = "On"
+         frame2["bg"] = "red"
+         print "timer On"
+B1=Button(display, text="On", command=b1_on_off, width=4, height=1)
+B1.grid(row=10, column=1, sticky=W)
+
+def b2_on_off():
+    if B2["text"] == "On":
+        B2["text"] = "Off"
+        print "timer Off"
+    if frame3["bg"] == "red":
+        frame3["bg"] = "black"
+    else:
+         B2["text"] = "On"     
+         frame3["bg"] = "red"
+         print "timer On"
+B2=Button(display, text="On", command=b2_on_off, width=4, height=1)
+B2.grid(row=13, column=1, sticky=W)
+
+def morning_start():
+    T1_data = T1.get("1.0",END)
+    print T1_data
+B3=Button(display, text="Enter", command=morning_start, width=4, height=1)
+B3.grid(row=15, column=3, sticky=W)
+
+def morning_stop():
+    T2_data = T2.get("1.0",END)
+    print T2_data
+B4=Button(display, text="Enter", command=morning_stop, width=4, height=1)
+B4.grid(row=16, column=3, sticky=W)
+
+def evening_start():
+    T3_data = T3.get("1.0",END)
+    print T3_data
+B5=Button(display, text="Enter", command=evening_start, width=4, height=1)
+B5.grid(row=17, column=3, sticky=W)
+
+def evening_stop():
+    T4_data = T4.get("1.0",END)
+    print T4_data
+B6=Button(display, text="Enter", command=evening_stop, width=4, height=1)
+B6.grid(row=18, column=3, sticky=W)
+
+def moisture_min():
+    T5_data = T5.get("1.0",END)
+    print T5_data
+B7=Button(display, text="Enter", command=moisture_min, width=4, height=1)
+B7.grid(row=19, column=3, sticky=W)
+
+def moisture_max():
+    T6_data = T6.get("1.0",END)
+    print T6_data
+B8=Button(display, text="Enter", command=moisture_max, width=4, height=1)
+B8.grid(row=20, column=3, sticky=W)
+
 #Frames
 frame1 = Frame(display, borderwidth=5, bg="black", relief="ridge", width=180, height=4)
 frame2 = Frame(display, borderwidth=3, bg="red", relief="ridge", width=50, height=25)
@@ -83,9 +139,9 @@ frame6.grid(row=0, column=20, columnspan=2, rowspan=18, sticky=W)
 frame7.grid(row=19, column=20, columnspan=2, rowspan=18, sticky=W)
 #Terminal
 termf = Frame(display, height=200, width=400)
-termf.grid(row=22, column=0, columnspan=20, rowspan=1, sticky=W)
+termf.grid(row=22, column=0, columnspan=18, rowspan=1, sticky=W)
 wid = termf.winfo_id()
-os.system('xterm -into %d -geometry 40x20 -sb &' % wid)
+os.system('xterm -into %d -geometry 60x20 -sb &' % wid)
 
 def tick():
     global time1
