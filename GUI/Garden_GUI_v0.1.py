@@ -3,7 +3,6 @@ import sys
 from Tkinter import *
 import time
 import os
-import subprocess as sub
 
 display = Tk()
 time1 = ''
@@ -108,7 +107,7 @@ B4=Button(display, text="Enter", command=morning_stop, width=4, height=1)
 B4.grid(row=16, column=3, sticky=W)
 
 def evening_start():
-    T3_data = T3.get("1.0",END)
+    T3_data = T3.get("1.0", END)
     T7.insert("1.0", "%s" % T3_data)
     print T3_data
 B5=Button(display, text="Enter", command=evening_start, width=4, height=1)
@@ -151,11 +150,6 @@ frame4.grid(row=14, column=0, columnspan=2, rowspan=1, sticky=W)
 frame5.grid(row=21, column=0, columnspan=2, rowspan=1, sticky=W)
 frame6.grid(row=0, column=24, columnspan=2, rowspan=18, sticky=E)
 frame7.grid(row=19, column=24, columnspan=2, rowspan=18, sticky=W)
-#Terminal
-#termf = Frame(display, height=200, width=400)
-#termf.grid(row=22, column=0, columnspan=18, rowspan=1, sticky=W)
-#wid = termf.winfo_id()
-#os.system('xterm -into %d -geometry 60x20 -sb &' % wid)
 
 def tick():
     global time1
