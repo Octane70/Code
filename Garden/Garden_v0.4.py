@@ -16,7 +16,6 @@ import os
 import spidev
 import RPi.GPIO as gpio
 
-
 # Open SPI bus
 spi = spidev.SpiDev()
 spi.open(0,0)
@@ -27,8 +26,8 @@ gpio.setup(12, gpio.OUT) # relay 1
 gpio.setup(16, gpio.OUT) # relay 2
 
 #Moisture sensor min and max
-moisture_min = 400
-moisture_max = 600
+moisture_min = 650
+moisture_max = 700
 
 print ('Watering times:')
 a = datetime(100,1,1,7,00,00) #7:00:00
@@ -39,11 +38,11 @@ b = datetime(100,1,1,7,30,00) #7:30:00
 morning_off = b.time()
 print b.time()
 
-c = datetime(100,1,1,19,00,00) #19:00:00
+c = datetime(100,1,1,21,23,00) #19:00:00
 evening_on = c.time()
 print c.time()
 
-d = datetime(100,1,1,19,30,00) #19:30:00
+d = datetime(100,1,1,21,24,00) #19:30:00
 evening_off = d.time()
 print d.time()
 
@@ -58,7 +57,7 @@ L1 = Label(root, text="Temperature =").grid(row=1,column=0,sticky=W)
 L2 = Label(root, text="Humidity =").grid(row=2,column=0,sticky=W)
 L3 = Label(root, text="Moisture =").grid(row=3,column=0,sticky=W)
 L4 = Label(root, text ="Watering Times").grid(row=5, column=0, rowspan=1, columnspan=2)
-L5 = Label(root, text ="Red is on & Black is off").grid(row=6, column=0, rowspan=1, columnspan=2)
+L5 = Label(root, text ="Red = On/ Black = Off/ Yellow = Auto").grid(row=6, column=0, rowspan=1, columnspan=2)
 L6 = Label(root, text ="Timer").grid(row=7, column=0, sticky=W)
 L7 = Label(root, text ="Manual").grid(row=7, column=1, sticky=W)
 L8 = Label(root, text ="Moisture").grid(row=11, column=0, sticky=W)
@@ -106,38 +105,50 @@ T7 = Text(root, width=28, height=10)
 T7.grid(row=23, column=0, columnspan=2, rowspan=1, sticky=W)
 
 #Buttons
-def b1_on_off():
-    if B1["text"] == "Off":
+#Timer button
+def b1_on_off_auto():
+    if B1["text"] == "Auto":
         B1["text"] = "On"
-        print "Timer On"
+        relay_ch1_on()
+        frame2["bg"] = "red"
         T7.insert("1.0", "Timer On\n")
-        gpio.output(12, True)
-    if frame2["bg"] == "black":
-        frame2["bg"] = "red"        
-    else:
+        print "Timer On"                
+    elif B1["text"] == "On":
          B1["text"] = "Off"
+         relay_ch1_off()
          frame2["bg"] = "black"
-         print "timer Off"
          T7.insert("1.0", "Timer Off\n")
-         gpio.output(12, False)
-B1=Button(root, text="Off", command=b1_on_off, width=4, height=1)
+         print "Timer Off"                                  
+    else:
+         B1["text"] = "Auto"
+         DayTimer()
+         frame2["bg"] = "Yellow"
+         T7.insert("1.0", "Timer Auto\n")
+         print "Timer Auto"
+B1=Button(root, text="Auto", command=b1_on_off_auto, width=4, height=1)
 B1.grid(row=10, column=1, sticky=W)
 
-def b2_on_off():
-    if B2["text"] == "Off":
+#Moisture button
+def b2_on_off_auto():
+    if B2["text"] == "Auto":
         B2["text"] = "On"
-        print "Moisture On"
-        T7.insert("1.0", "Moisture On\n")
-        gpio.output(16, True)
-    if frame3["bg"] == "black":
+        relay_ch2_on()
         frame3["bg"] = "red"
-    else:
-         B2["text"] = "Off"     
+        T7.insert("1.0", "Moisture On\n")
+        print "Moisture On"                
+    elif B2["text"] == "On":
+         B2["text"] = "Off"
+         relay_ch2_off()
          frame3["bg"] = "black"
-         print "Moisture Off"
          T7.insert("1.0", "Moisture Off\n")
-         gpio.output(16, False)
-B2=Button(root, text="Off", command=b2_on_off, width=4, height=1)
+         print "Moisture Off"         
+    else:
+         B2["text"] = "Auto"
+         MoistureTimer()
+         frame3["bg"] = "yellow"
+         T7.insert("1.0", "Moisture Auto\n")
+         print "Moisture Auto"                  
+B2=Button(root, text="Auto", command=b2_on_off_auto, width=4, height=1)
 B2.grid(row=13, column=1, sticky=W)
 
 def morning_start():
@@ -182,24 +193,17 @@ def moisture_max():
 B8=Button(root, text="Enter", command=moisture_max, width=4, height=1)
 B8.grid(row=20, column=3, sticky=W)
 
-def Reload():
-    T6_data = T6.get("1.0",END)
-    T7.insert("1.0", "%s" % T6_data)
-    print "Reload Script"
-B9=Button(root, text="Reload", width=4, height=1)
-B9.grid(row=24, column=0, sticky=W)
-
 def close():
     T6_data = T6.get("1.0",END)
     T7.insert("1.0", "%s" % T6_data)
     print "Close Script"
 B10=Button(root, text="Close", command=sys.exit, width=4, height=1)
-B10.grid(row=24, column=1, sticky=W)
+B10.grid(row=24, column=0, sticky=W)
 
 #Frames
 frame1 = Frame(root, borderwidth=5, bg="black", relief="ridge", width=180, height=4)
-frame2 = Frame(root, borderwidth=3, bg="black", relief="ridge", width=50, height=25)
-frame3 = Frame(root, borderwidth=3, bg="black", relief="ridge", width=50, height=25)
+frame2 = Frame(root, borderwidth=3, bg="yellow", relief="ridge", width=50, height=25)
+frame3 = Frame(root, borderwidth=3, bg="Yellow", relief="ridge", width=50, height=25)
 frame4 = Frame(root, borderwidth=5, bg="black", relief="ridge", width=200, height=4)
 frame5 = Frame(root, borderwidth=5, bg="black", relief="ridge", width=200, height=4)
 frame6 = Frame(root, borderwidth=7, relief="ridge", width=350, height=275)
@@ -236,8 +240,30 @@ def relay_ch1_off():
 def relay_ch2_on():
     gpio.output(16, True) #Relay ch2 on
 def relay_ch2_off(): 
-    gpio.output(16, False) #Relay ch2 off    
-                
+    gpio.output(16, False) #Relay ch2 off
+
+#Time controlled irrigation relay_ch1
+#Daytime and evening irrigation time
+def DayTimer():
+    if datetime.now().time() >= morning_on and datetime.now().time() <= morning_off:
+       relay_ch1_on()
+    elif datetime.now().time() >= evening_on and datetime.now().time() <= evening_off:
+       relay_ch1_on()
+       frame2["bg"] = "red"
+    else:
+       relay_ch1_off()
+       frame2["bg"] = "yellow"
+
+#Moisture controlled irrigation relay_ch2
+def MoistureTimer():
+    #global moisture
+    if moisture >= moisture_min and moisture <= moisture_max:
+       relay_ch2_on()
+       frame3["bg"] = "red"
+    else:
+       relay_ch2_off()
+       frame3["bg"] = "yellow"
+       
 lcd = Adafruit_CharLCD()
 lcd.begin(16, 1)
 counter = 0
@@ -247,27 +273,22 @@ def updates():
     global counter
     global temperature
     global humidity
-    global moisture
+    #global moisture
        
     #Import Humidity and Temperature from AdafruitDHT // 30 second refresh rate
     if counter % 30 == 0:
         humidity, temperature = Adafruit_DHT.read_retry(22, 4)
     #Import moisture from moisture sensor // 1 second refresh rate
     moisture = ReadChannel(2)
-    #moisture controlled irrigation relay_ch1 
-    #if moisture >= moisture_min and moisture <= moisture_max:
-       #relay_ch1_on()
-    #else:
-       #relay_ch1_off()
-    #Time controlled irrigation relay_ch2
-    #Daytime and evening irrigation time
-    #if datetime.now().time() >= morning_on and datetime.now().time() <= morning_off:
-       #relay_ch2_on()
-    #elif datetime.now().time() >= evening_on and datetime.now().time() <= evening_off:
-       #relay_ch2_on()
-    #else:
-       #relay_ch2_off()
-
+    
+    #Irrigaation timer
+    if B1["text"] == "Auto":
+       DayTimer()
+        
+    #Moisture timer
+    if B2["text"] == "Auto":
+       MoistureTimer()
+        
     #LCD updates  
     lcd.clear()
     lcd.message(datetime.now().time().strftime('%H:%M:%S '))
@@ -282,6 +303,8 @@ def updates():
     counter += 1
     root.after(1000, updates)
     
+DayTimer()
+MoistureTimer()
 gui_widgets()
 root.after(1000, updates)   
 
