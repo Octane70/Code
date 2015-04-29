@@ -1,5 +1,5 @@
 #!/usr/bin/python
-#Version v0.3
+#Version v0.4
 
 #0 ~300 : dry soil
 #300~700 : humid soil
@@ -25,10 +25,6 @@ gpio.setmode(gpio.BCM)
 gpio.setup(12, gpio.OUT) # relay 1
 gpio.setup(16, gpio.OUT) # relay 2
 
-#Moisture sensor min and max
-moisture_min = 650
-moisture_max = 700
-
 print ('Watering times:')
 a = datetime(100,1,1,7,00,00) #7:00:00
 morning_on = a.time()
@@ -38,11 +34,11 @@ b = datetime(100,1,1,7,30,00) #7:30:00
 morning_off = b.time()
 print b.time()
 
-c = datetime(100,1,1,21,23,00) #19:00:00
+c = datetime(100,1,1,19,00,00) #19:00:00
 evening_on = c.time()
 print c.time()
 
-d = datetime(100,1,1,21,24,00) #19:30:00
+d = datetime(100,1,1,19,30,00) #19:30:00
 evening_off = d.time()
 print d.time()
 
@@ -217,7 +213,6 @@ frame5.grid(row=21, column=0, columnspan=2, rowspan=1, sticky=W)
 frame6.grid(row=0, column=24, columnspan=2, rowspan=18, sticky=E)
 frame7.grid(row=19, column=24, columnspan=2, rowspan=18, sticky=W)
 
-
 def gui_widgets():
    Label(root, textvariable=clock, font=('Times', 20, 'bold')).grid(row=0,column=0,sticky=W)
    Label(root, textvariable=temp).grid(row=1,column=1,sticky=W)
@@ -230,18 +225,6 @@ def ReadChannel(channel):
    data = ((adc[1]&3) << 8) + adc[2]
    return data
 
-# Irrigation relay ch1 on and off
-def relay_ch1_on():
-    gpio.output(12, True) #Relay ch1 on
-def relay_ch1_off(): 
-    gpio.output(12, False) #Relay ch1 off
-
-# Irrigation relay ch2 on and off
-def relay_ch2_on():
-    gpio.output(16, True) #Relay ch2 on
-def relay_ch2_off(): 
-    gpio.output(16, False) #Relay ch2 off
-
 #Time controlled irrigation relay_ch1
 #Daytime and evening irrigation time
 def DayTimer():
@@ -253,10 +236,14 @@ def DayTimer():
     else:
        relay_ch1_off()
        frame2["bg"] = "yellow"
+       
+#Moisture sensor min and max
+moisture_min = 650
+moisture_max = 700
 
 #Moisture controlled irrigation relay_ch2
 def MoistureTimer():
-    #global moisture
+    global moisture
     if moisture >= moisture_min and moisture <= moisture_max:
        relay_ch2_on()
        frame3["bg"] = "red"
@@ -264,6 +251,18 @@ def MoistureTimer():
        relay_ch2_off()
        frame3["bg"] = "yellow"
        
+# Irrigation relay ch1 on and off
+def relay_ch1_on():
+    gpio.output(12, True) #Relay ch1 on
+def relay_ch1_off(): 
+    gpio.output(12, False) #Relay ch1 off
+
+# Irrigation relay ch2 on and off
+def relay_ch2_on():
+    gpio.output(16, True) #Relay ch2 on
+def relay_ch2_off(): 
+    gpio.output(16, False) #Relay ch2 off
+              
 lcd = Adafruit_CharLCD()
 lcd.begin(16, 1)
 counter = 0
@@ -273,7 +272,7 @@ def updates():
     global counter
     global temperature
     global humidity
-    #global moisture
+    global moisture
        
     #Import Humidity and Temperature from AdafruitDHT // 30 second refresh rate
     if counter % 30 == 0:
@@ -288,7 +287,7 @@ def updates():
     #Moisture timer
     if B2["text"] == "Auto":
        MoistureTimer()
-        
+              
     #LCD updates  
     lcd.clear()
     lcd.message(datetime.now().time().strftime('%H:%M:%S '))
@@ -302,9 +301,8 @@ def updates():
     moist.set ('%d' % moisture)       
     counter += 1
     root.after(1000, updates)
-    
+           
 DayTimer()
-MoistureTimer()
 gui_widgets()
 root.after(1000, updates)   
 
