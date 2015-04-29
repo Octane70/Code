@@ -238,8 +238,8 @@ def DayTimer():
        frame2["bg"] = "yellow"
        
 #Moisture sensor min and max
-moisture_min = 650
-moisture_max = 700
+moisture_min = 400
+moisture_max = 600
 
 #Moisture controlled irrigation relay_ch2
 def MoistureTimer():
