@@ -74,8 +74,6 @@ frame5.grid(row=21, column=0, columnspan=2, rowspan=1, sticky=W)
 frame6.grid(row=0, column=5, columnspan=2, rowspan=18)
 frame7.grid(row=19, column=5, columnspan=2, rowspan=18)
 
-
-
 #Text
 T1 = Text(root, width=10, height=1)
 T1.insert("1.0", "0700\n") #Default value
@@ -307,8 +305,7 @@ def updates():
     global counter
     global temperature
     global humidity
-    
-       
+           
     #Import Humidity and Temperature from AdafruitDHT // 30 second refresh rate
     if counter % 30 == 0:
         humidity, temperature = Adafruit_DHT.read_retry(22, 4)
@@ -344,4 +341,3 @@ root.after(1000, updates)
 
 root.mainloop() 
 gpio.cleanup()	
-
