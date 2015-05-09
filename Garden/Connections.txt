@@ -1,0 +1,55 @@
+#SeeedStudio 16 x 2 Green LCD
+https://learn.adafruit.com/drive-a-16x2-lcd-directly-with-a-raspberry-pi/wiring
+
+1.Ground
+2.VCC - 5v not 3.3v
+3.Contrast adjustment (VO) from potentiometer
+4.Register Select (RS). RS=0: Command, RS=1: Data
+5.Read/Write (R/W). R/W=0: Write, R/W=1: Read (we won't use this pin)
+6.Clock (Enable). Falling edge triggered
+7.Bit 0 (Not used in 4-bit operation)
+8.Bit 1 (Not used in 4-bit operation)
+9.Bit 2 (Not used in 4-bit operation)
+10.Bit 3 (Not used in 4-bit operation)
+11.Bit 4
+12.Bit 5
+13.Bit 6
+14.Bit 7
+15.Backlight LED Anode (+)
+16Backlight LED Cathode (-)
+
+#MCP3008 D/A 
+http://www.raspberrypi-spy.co.uk/2013/10/analogue-sensors-on-the-raspberry-pi-using-an-mcp3008/
+VDD   3.3V
+VREF  3.3V
+AGND  GROUND
+CLK   GPIO11 (P1-23)
+DOUT  GPIO9  (P1-21)
+DIN   GPIO10 (P1-19)
+CS    GPIO8  (P1-24)
+DGND  GROUND
+
+
+#Moisture sensor
+Power supply: 3.3v or 5v
+Pin definition:
+1-Analog output(Blue wire)
+2-GND(Black wire)
+3-Power(Red wire)
+
+Value range:
+0 ~300 : dry soil
+300~700 : humid soil
+700~950 : in water
+
+#DHT temperature sensor
+https://learn.adafruit.com/dht-humidity-sensing-on-raspberry-pi-with-gdocs-logging/wiring
+gpio #4
+connect a 4.7K - 10K resistor from the data pin to VCC
+
+#2 channel relay
+# Irrigation relay ch1 on and off
+gpio.output(12, True) #Relay ch1 on
+gpio.output(16, True) #Relay ch2 on
+
+
