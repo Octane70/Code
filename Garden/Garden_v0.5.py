@@ -13,12 +13,17 @@ from Tkinter import *
 import sys
 #import Adafruit_DHT
 import os
-#import spidev
+import spidev
 #import RPi.GPIO as gpio
 
+os.system('modprobe w1-gpio')
+os.system('modprobe w1-therm')
+
+temp_sensor = '/sys/bus/w1/devices/28-0000060e26f0/w1_slave'
+
 # Open SPI bus
-#spi = spidev.SpiDev()
-#spi.open(0,0)
+spi = spidev.SpiDev()
+spi.open(0,0)
 
 # Initiate gpio's for relay
 #gpio.setmode(gpio.BCM)
@@ -67,9 +72,10 @@ L20 = Label(root, text ="Shell Output:").grid(row=34, column=0, sticky=W)
 clock = StringVar()
 temp = StringVar()
 hum = StringVar()
-moist = StringVar()
-time_str1 = StringVar()
-time_str2 = StringVar()
+moist1 = StringVar()
+moist2 = StringVar()
+cputemp = StringVar()
+casetemp = StringVar()
 
 #Frames
 frame1 = Frame(root, borderwidth=5, bg="black", relief="ridge", width=200, height=4)  #Divider1 
@@ -317,12 +323,31 @@ def Zone2Timer():
        #relay_ch1_off()
        #frame2["bg"] = "yellow"
        #print "Zone2 Off"
+       
+# Functions for Case temp sensor
+def temp_raw():
+
+    f = open(temp_sensor, 'r')
+    lines = f.readlines()
+    f.close()
+    return lines
+
+def read_temp():
+    lines = temp_raw()
+    while lines[0].strip()[-3:] != 'YES':
+        time.sleep(0.2)
+        lines = temp_raw()
+    temp_output = lines[1].find('t=')
+    if temp_output != -1:
+        temp_string = lines[1].strip()[temp_output+2:]
+        temp_c = float(temp_string) / 1000.0
+        return temp_c       
 
 # Function to read SPI data from MCP3008 chip
-#def ReadChannel(channel):
-   #adc = spi.xfer2([1,(8+channel)<<4,0])
-   #data = ((adc[1]&3) << 8) + adc[2]
-   #return data
+def ReadChannel(channel):
+   adc = spi.xfer2([1,(8+channel)<<4,0])
+   data = ((adc[1]&3) << 8) + adc[2]
+   return data
 
 #Moisture controlled irrigation relay_ch
 #def MoistureTimer():
@@ -366,19 +391,24 @@ def gui_widgets():
    Label(root, textvariable=clock, font=('Times', 20, 'bold')).grid(row=0,column=0,sticky=W)
    Label(root, textvariable=temp).grid(row=1,column=1,sticky=W)
    Label(root, textvariable=hum).grid(row=2,column=1,sticky=W)
-   Label(root, textvariable=moist).grid(row=3,column=1,sticky=W)
+   Label(root, textvariable=moist1).grid(row=3,column=1,sticky=W)
+   Label(root, textvariable=moist2).grid(row=4,column=1,sticky=W)
+   Label(root, textvariable=cputemp).grid(row=5,column=1,sticky=W)
+   Label(root, textvariable=casetemp).grid(row=6,column=1,sticky=W)
    
 def updates():
     global clock
     #global counter
     global temperature
+    global read_temp
     global humidity
            
     #Import Humidity and Temperature from AdafruitDHT // 30 second refresh rate
     #if counter % 30 == 0:
         #humidity, temperature = Adafruit_DHT.read_retry(22, 4)
     #Import moisture from moisture sensor // 1 second refresh rate
-    #moisture = ReadChannel(2)
+    moisture1 = ReadChannel(2)
+    moisture2 = ReadChannel(3)
     
     #Zone 1
     if B1["text"] == "Auto":
@@ -397,13 +427,17 @@ def updates():
     #GUI updates
     clock.set (datetime.now().time().strftime('%H:%M:%S '))
     #temp.set ('%0.1fC' % temperature)
+    casetemp.set ('%dC' % read_temp())
     #hum.set ('%0.1f%%' % humidity)
-    #moist.set ('%d' % moisture)       
+    moist1.set ('%d' % moisture1)
+    moist2.set ('%d' % moisture2)
     #counter += 1
     root.after(1000, updates)
            
 Zone1Timer()
 Zone2Timer()
+temp_raw()
+read_temp()
 gui_widgets()
 root.after(1000, updates)   
 
