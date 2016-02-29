@@ -5,16 +5,16 @@
 #300~700 : humid soil
 #700~950 : in water
 
-#from Adafruit_CharLCD import Adafruit_CharLCD
+from Adafruit_CharLCD import Adafruit_CharLCD
 from subprocess import *
 from time import sleep, strftime
 from datetime import datetime
 from Tkinter import *
 import sys
-#import Adafruit_DHT
+import Adafruit_DHT
 import os
 import spidev
-#import RPi.GPIO as gpio
+import RPi.GPIO as gpio
 
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
@@ -26,14 +26,14 @@ spi = spidev.SpiDev()
 spi.open(0,0)
 
 # Initiate gpio's for relay
-#gpio.setmode(gpio.BCM)
-#gpio.setup(12, gpio.OUT) # relay 1
-#gpio.setup(16, gpio.OUT) # relay 2
+gpio.setmode(gpio.BCM)
+gpio.setup(12, gpio.OUT) # relay 1
+gpio.setup(16, gpio.OUT) # relay 2
 
 #GUI window
 root = Tk()   
 time1 = ''
-root.title("Irrigation GUI")
+root.title("Irrigation GUI v0.5")
 root.geometry("700x875+300+100")
 #Labels
 label_font = ('helvetica', 12)
@@ -372,20 +372,20 @@ def ReadChannel(channel):
        #print "Moisture off"
        
 # Irrigation relay ch1 on and off
-#def relay_ch1_on():
-    #gpio.output(12, True) #Relay ch1 on
-#def relay_ch1_off(): 
-    #gpio.output(12, False) #Relay ch1 off
+def relay_ch1_on():
+    gpio.output(12, True) #Relay ch1 on
+def relay_ch1_off(): 
+    gpio.output(12, False) #Relay ch1 off
 
 # Irrigation relay ch2 on and off
-#def relay_ch2_on():
-    #gpio.output(16, True) #Relay ch2 on
-#def relay_ch2_off(): 
-    #gpio.output(16, False) #Relay ch2 off
+def relay_ch2_on():
+    gpio.output(16, True) #Relay ch2 on
+def relay_ch2_off(): 
+    gpio.output(16, False) #Relay ch2 off
               
-#lcd = Adafruit_CharLCD()
-#lcd.begin(16, 1)
-#counter = 0
+lcd = Adafruit_CharLCD()
+lcd.begin(16, 1)
+counter = 0
 
 def gui_widgets():
    Label(root, textvariable=clock, font=('Times', 20, 'bold')).grid(row=0,column=0,sticky=W)
@@ -398,14 +398,15 @@ def gui_widgets():
    
 def updates():
     global clock
-    #global counter
+    global counter
     global temperature
     global read_temp
     global humidity
+    global moisture
            
     #Import Humidity and Temperature from AdafruitDHT // 30 second refresh rate
-    #if counter % 30 == 0:
-        #humidity, temperature = Adafruit_DHT.read_retry(22, 4)
+    if counter % 30 == 0:
+        humidity, temperature = Adafruit_DHT.read_retry(22, 26)
     #Import moisture from moisture sensor // 1 second refresh rate
     moisture1 = ReadChannel(2)
     moisture2 = ReadChannel(3)
@@ -419,19 +420,19 @@ def updates():
        Zone2Timer()
               
     #LCD updates  
-    #lcd.clear()
-    #lcd.message(datetime.now().time().strftime('%H:%M:%S '))
-    #lcd.message ('T=%0.1fC\n' % temperature)
-    #lcd.message ('H=%0.1f%%' % humidity)
-    #lcd.message ('  M=%d' % moisture)
+    lcd.clear()
+    lcd.message(datetime.now().time().strftime('%H:%M:%S '))
+    lcd.message ('T=%0.1fC\n' % temperature)
+    lcd.message ('H=%0.1f%%' % humidity)
+    lcd.message ('  M=%d' % moisture1)
     #GUI updates
     clock.set (datetime.now().time().strftime('%H:%M:%S '))
-    #temp.set ('%0.1fC' % temperature)
+    temp.set ('%0.1fC' % temperature)
     casetemp.set ('%dC' % read_temp())
-    #hum.set ('%0.1f%%' % humidity)
+    hum.set ('%0.1f%%' % humidity)
     moist1.set ('%d' % moisture1)
     moist2.set ('%d' % moisture2)
-    #counter += 1
+    counter += 1
     root.after(1000, updates)
            
 Zone1Timer()
