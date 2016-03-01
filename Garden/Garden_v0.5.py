@@ -27,8 +27,10 @@ spi.open(0,0)
 
 # Initiate gpio's for relay
 gpio.setmode(gpio.BCM)
-gpio.setup(12, gpio.OUT) # relay 1
-gpio.setup(16, gpio.OUT) # relay 2
+gpio.setup(5, gpio.OUT) # relay 1
+gpio.setup(6, gpio.OUT) # relay 2
+gpio.setup(16, gpio.OUT) # relay 3
+gpio.setup(26, gpio.OUT) # relay 4
 
 #GUI window
 root = Tk()   
@@ -68,7 +70,7 @@ L16 = Label(root, text ="Case Fan On:").grid(row=31, column=0, sticky=W)
 LK = Label(root, text ="Case Fan Off:").grid(row=32, column=0, sticky=W)
 L18 = Label(root, text ="Camera 1:").grid(row=0, column=4)
 L19 = Label(root, text ="Camera 2:").grid(row=18, column=4)
-L20 = Label(root, text ="Shell Output:").grid(row=34, column=0, sticky=W)
+L20 = Label(root, text ="Output Display:").grid(row=34, column=0, sticky=W)
 clock = StringVar()
 temp = StringVar()
 hum = StringVar()
@@ -133,7 +135,7 @@ T7.grid(row=31, column=1, sticky=W)
 T8 = Text(root, width=10, height=1)
 T8.insert("1.0", "25\n") #Default value
 T8.grid(row=32, column=1, sticky=W)
-#Shell
+#Output Display
 T9 = Text(root, width=28, height=8)
 T9.grid(row=35, column=0, columnspan=2, rowspan=1, sticky=W)
 
@@ -154,20 +156,20 @@ def b1_on_off_auto():
         B1["text"] = "On"
         relay_ch1_on()
         frame2["bg"] = "red"
-        T7.insert("1.0", "Timer On\n")
-        print "Timer On"                
+        T9.insert("1.0", "Zone1 On\n")
+        print "Zone1 On"                
     elif B1["text"] == "On":
          B1["text"] = "Off"
-         #relay_ch1_off()
+         relay_ch1_off()
          frame2["bg"] = "black"
-         T7.insert("1.0", "Timer Off\n")
-         print "Timer Off"                                  
+         T9.insert("1.0", "Zone1 Off\n")
+         print "Zone1 Off"                                  
     else:
          B1["text"] = "Auto"
-         DayTimer()
+         Zone1Timer()
          frame2["bg"] = "Yellow"
-         T7.insert("1.0", "Timer Auto\n")
-         print "Timer Auto"
+         T9.insert("1.0", "Zone1 Auto\n")
+         print "Zone1 Auto"
 B1=Button(root, text="Auto", command=b1_on_off_auto, width=4, height=1)
 B1.grid(row=10, column=1, sticky=W)
 
@@ -177,20 +179,20 @@ def b2_on_off_auto():
         B2["text"] = "On"
         relay_ch2_on()
         frame3["bg"] = "red"
-        T7.insert("1.0", "Moisture On\n")
-        print "Moisture On"                
+        T9.insert("1.0", "Zone2 On\n")
+        print "Zone2 On"                
     elif B2["text"] == "On":
          B2["text"] = "Off"
          relay_ch2_off()
          frame3["bg"] = "black"
-         T7.insert("1.0", "Moisture Off\n")
-         print "Moisture Off"         
+         T9.insert("1.0", "Zone2 Off\n")
+         print "Zone2 Off"         
     else:
          B2["text"] = "Auto"
-         MoistureTimer()
+         Zone2Timer()
          frame3["bg"] = "yellow"
-         T7.insert("1.0", "Moisture Auto\n")
-         print "Moisture Auto"                  
+         T9.insert("1.0", "Moisture Auto\n")
+         print "Zone2 Auto"                  
 B2=Button(root, text="Auto", command=b2_on_off_auto, width=4, height=1)
 B2.grid(row=12, column=1, sticky=W)
 
@@ -275,8 +277,13 @@ B12=Button(root, text="Enter", command=case_fan_stop, width=4, height=1)
 B12.grid(row=32, column=2, sticky=W)
 
 def close():
-    T6_data = T6.get("1.0",END)
-    T7.insert("1.0", "%s" % T6_data)
+    #set relay gpio's to false
+    gpio.output(5, True) # relay 1
+    gpio.output(6, True) # relay 2
+    gpio.output(16, True) # relay 3
+    gpio.output(26, True) # relay 4
+    gpio.cleanup()
+    quit()
     print "Close Script"
     
 B13=Button(root, text="Close", command=sys.exit, width=4, height=1)
@@ -289,17 +296,15 @@ def Zone1Timer():
     print zone1_start
 
     b_time = T2_get_data
-    zone1_timer = datetime.strptime(b_time.rstrip('\n'), "%H%M").time()
-    print zone1_timer
+    zone1_stop = datetime.strptime(b_time.rstrip('\n'), "%H%M").time()
+    print zone1_stop
     
-    if datetime.now().time() == zone1_start:
-       #and datetime.now().time() <= morning_off:
-       #relay_ch1_on()
-       countdown1
+    if datetime.now().time() >= zone1_start and datetime.now().time() <= zone1_stop:
+       relay_ch1_on()
        frame2["bg"] = "red"
        print "Zone1 On"
     else:
-       #relay_ch1_off()
+       relay_ch1_off()
        frame2["bg"] = "yellow"
        print "Zone1 Off"
        
@@ -310,19 +315,17 @@ def Zone2Timer():
     print zone2_start
 
     d_time = T4_get_data
-    zone2_timer = datetime.strptime(d_time.rstrip('\n'), "%H%M").time()
-    print zone2_timer
+    zone2_stop = datetime.strptime(d_time.rstrip('\n'), "%H%M").time()
+    print zone2_stop
     
-    if datetime.now().time() == zone2_start:
-       #and datetime.now().time() <= evening_off:
-       #relay_ch1_on()
-       Zone2countdown()
+    if datetime.now().time() >= zone2_start and datetime.now().time() <= zone2_stop:
+       relay_ch1_on()
        frame2["bg"] = "red"
        print "Zone2 On"
-    #else:
-       #relay_ch1_off()
-       #frame2["bg"] = "yellow"
-       #print "Zone2 Off"
+    else:
+       relay_ch1_off()
+       frame2["bg"] = "yellow"
+       print "Zone2 Off"
        
 # Functions for Case temp sensor
 def temp_raw():
@@ -348,41 +351,31 @@ def ReadChannel(channel):
    adc = spi.xfer2([1,(8+channel)<<4,0])
    data = ((adc[1]&3) << 8) + adc[2]
    return data
-
-#Moisture controlled irrigation relay_ch
-#def MoistureTimer():
-    #Import moisture from moisture sensor // 1 second refresh rate
-    #moisture_data = ReadChannel(2)
-    #moisture = ('%d' % moisture_data) 
-    #d_time = T5_get_data
-    #moisture_min = d_time.rstrip('\n')
-    #print moisture_min
-
-    #e_time = T6_get_data
-    #moisture_max = e_time.rstrip('\n')
-    #print moisture_max
-    
-    #if moisture >= moisture_min and moisture <= moisture_max:
-       #relay_ch2_on()
-       #frame3["bg"] = "red"
-       #print "Moisture on"
-    #else:
-       #relay_ch2_off()
-       #frame3["bg"] = "yellow"
-       #print "Moisture off"
        
-# Irrigation relay ch1 on and off
+# Zone1 relay ch1 on and off
 def relay_ch1_on():
-    gpio.output(12, True) #Relay ch1 on
+    gpio.output(5, True) #Relay ch1 on
 def relay_ch1_off(): 
-    gpio.output(12, False) #Relay ch1 off
+    gpio.output(5, False) #Relay ch1 off
 
-# Irrigation relay ch2 on and off
+# Zone2 relay ch2 on and off
 def relay_ch2_on():
-    gpio.output(16, True) #Relay ch2 on
+    gpio.output(6, True) #Relay ch2 on
 def relay_ch2_off(): 
-    gpio.output(16, False) #Relay ch2 off
-              
+    gpio.output(6, False) #Relay ch2 off
+
+# G/H fan relay ch3 on and off
+def relay_ch3_on():
+    gpio.output(16, True) #Relay ch3 on
+def relay_ch3_off(): 
+    gpio.output(16, False) #Relay ch3 off
+
+# Case fan relay ch4 on and off
+def relay_ch4_on():
+    gpio.output(26, True) #Relay ch4 on
+def relay_ch4_off(): 
+    gpio.output(26, False) #Relay ch4 off
+    
 lcd = Adafruit_CharLCD()
 lcd.begin(16, 1)
 counter = 0
@@ -406,7 +399,8 @@ def updates():
            
     #Import Humidity and Temperature from AdafruitDHT // 30 second refresh rate
     if counter % 30 == 0:
-        humidity, temperature = Adafruit_DHT.read_retry(22, 26)
+        humidity, temperature = Adafruit_DHT.read_retry(22, 18)
+        casetemp.set ('%dC' % read_temp())
     #Import moisture from moisture sensor // 1 second refresh rate
     moisture1 = ReadChannel(2)
     moisture2 = ReadChannel(3)
@@ -428,7 +422,7 @@ def updates():
     #GUI updates
     clock.set (datetime.now().time().strftime('%H:%M:%S '))
     temp.set ('%0.1fC' % temperature)
-    casetemp.set ('%dC' % read_temp())
+    #casetemp.set ('%dC' % read_temp())
     hum.set ('%0.1f%%' % humidity)
     moist1.set ('%d' % moisture1)
     moist2.set ('%d' % moisture2)
@@ -437,8 +431,8 @@ def updates():
            
 Zone1Timer()
 Zone2Timer()
-temp_raw()
-read_temp()
+#temp_raw()
+#read_temp()
 gui_widgets()
 root.after(1000, updates)   
 
