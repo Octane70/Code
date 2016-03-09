@@ -15,6 +15,7 @@ import Adafruit_DHT
 import os
 import spidev
 import RPi.GPIO as gpio
+import commands
 
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
@@ -43,34 +44,34 @@ clock = Label(root)
 L1 = Label(root, text="Temperature =").grid(row=1,column=0,sticky=W)
 L2 = Label(root, text="Humidity =").grid(row=2,column=0,sticky=W)
 L3 = Label(root, text="Moisture1 =").grid(row=3,column=0,sticky=W)
-LC = Label(root, text="Moisture2 =").grid(row=4,column=0,sticky=W)
-LD = Label(root, text="CPU Temp =").grid(row=5,column=0,sticky=W)
-LE = Label(root, text="Case Temp =").grid(row=6,column=0,sticky=W)
-L4 = Label(root, text ="Watering Times").grid(row=8, column=0, rowspan=1, columnspan=2, sticky=W)
-L5 = Label(root, text ="Zone1").grid(row=9, column=0, rowspan=1, columnspan=2, sticky=W)
-L6 = Label(root, text ="Manual").grid(row=9, column=1, rowspan=1, columnspan=2, sticky=W)
-L7 = Label(root, text ="Zone2").grid(row=11, column=0, rowspan=1, columnspan=2, sticky=W)
-L8 = Label(root, text ="Manual").grid(row=11, column=1, rowspan=1, columnspan=2, sticky=W)
-LF = Label(root, text ="Cooling").grid(row=14, column=0, rowspan=1, columnspan=2, sticky=W)
-LA = Label(root, text ="G/H Fan").grid(row=15, column=0, rowspan=1, columnspan=2, sticky=W)
-LB = Label(root, text ="Manual").grid(row=15, column=1, rowspan=1, columnspan=2, sticky=W)
-LG = Label(root, text ="Case Fan").grid(row=18, column=0, rowspan=1, columnspan=2, sticky=W)
-LH = Label(root, text ="Manual").grid(row=18, column=1, rowspan=1, columnspan=2, sticky=W)
-L9 = Label(root, text ="Red = On").grid(row=21, column=0, rowspan=1, columnspan=1, sticky=W)
-L11 = Label(root, text ="Yellow = Auto").grid(row=21, column=1, rowspan=1, columnspan=1, sticky=W)
-L10 = Label(root, text ="Black = Off").grid(row=22, column=0, rowspan=1, columnspan=1, sticky=W)
-LL = Label(root, text ="Timers").grid(row=24, column=0, sticky=W)
-L12 = Label(root, text ="Zone1 On:").grid(row=25, column=0, sticky=W)
-L13 = Label(root, text ="Zone1 Off:").grid(row=26, column=0, sticky=W)
-L14 = Label(root, text ="Zone2 On:").grid(row=27, column=0, sticky=W)
-L15 = Label(root, text ="Zone2 Off:").grid(row=28, column=0, sticky=W)
-L16 = Label(root, text ="G/H Fan On:").grid(row=29, column=0, sticky=W)
-LJ = Label(root, text ="G/H Fan Off:").grid(row=30, column=0, sticky=W)
-L16 = Label(root, text ="Case Fan On:").grid(row=31, column=0, sticky=W)
-LK = Label(root, text ="Case Fan Off:").grid(row=32, column=0, sticky=W)
-L18 = Label(root, text ="Camera 1:").grid(row=0, column=4)
-L19 = Label(root, text ="Camera 2:").grid(row=18, column=4)
-L20 = Label(root, text ="Output Display:").grid(row=34, column=0, sticky=W)
+L4 = Label(root, text="Moisture2 =").grid(row=4,column=0,sticky=W)
+L5 = Label(root, text="CPU Temp =").grid(row=5,column=0,sticky=W)
+L6 = Label(root, text="Case Temp =").grid(row=6,column=0,sticky=W)
+L7 = Label(root, text ="Watering Times").grid(row=8, column=0, rowspan=1, columnspan=2, sticky=W)
+L8 = Label(root, text ="Zone1").grid(row=9, column=0, rowspan=1, columnspan=2, sticky=W)
+L9 = Label(root, text ="Manual").grid(row=9, column=1, rowspan=1, columnspan=2, sticky=W)
+L10 = Label(root, text ="Zone2").grid(row=11, column=0, rowspan=1, columnspan=2, sticky=W)
+L11 = Label(root, text ="Manual").grid(row=11, column=1, rowspan=1, columnspan=2, sticky=W)
+L12 = Label(root, text ="Cooling").grid(row=14, column=0, rowspan=1, columnspan=2, sticky=W)
+L13 = Label(root, text ="G/H Fan").grid(row=15, column=0, rowspan=1, columnspan=2, sticky=W)
+L14 = Label(root, text ="Manual").grid(row=15, column=1, rowspan=1, columnspan=2, sticky=W)
+L15 = Label(root, text ="Case Fan").grid(row=18, column=0, rowspan=1, columnspan=2, sticky=W)
+L16 = Label(root, text ="Manual").grid(row=18, column=1, rowspan=1, columnspan=2, sticky=W)
+L17 = Label(root, text ="Red = On").grid(row=21, column=0, rowspan=1, columnspan=1, sticky=W)
+L18 = Label(root, text ="Yellow = Auto").grid(row=21, column=1, rowspan=1, columnspan=1, sticky=W)
+L19 = Label(root, text ="Black = Off").grid(row=22, column=0, rowspan=1, columnspan=1, sticky=W)
+L20 = Label(root, text ="Timers").grid(row=24, column=0, sticky=W)
+L21= Label(root, text ="Zone1 On:").grid(row=25, column=0, sticky=W)
+L22 = Label(root, text ="Zone1 Off:").grid(row=26, column=0, sticky=W)
+L23 = Label(root, text ="Zone2 On:").grid(row=27, column=0, sticky=W)
+L24 = Label(root, text ="Zone2 Off:").grid(row=28, column=0, sticky=W)
+L25 = Label(root, text ="G/H Fan On:").grid(row=29, column=0, sticky=W)
+L26 = Label(root, text ="G/H Fan Off:").grid(row=30, column=0, sticky=W)
+L27 = Label(root, text ="Case Fan On:").grid(row=31, column=0, sticky=W)
+L28 = Label(root, text ="Case Fan Off:").grid(row=32, column=0, sticky=W)
+L29 = Label(root, text ="Camera 1:").grid(row=0, column=4)
+L30 = Label(root, text ="Camera 2:").grid(row=18, column=4)
+L31 = Label(root, text ="Output Display:").grid(row=34, column=0, sticky=W)
 clock = StringVar()
 temp = StringVar()
 hum = StringVar()
@@ -84,23 +85,23 @@ frame1 = Frame(root, borderwidth=5, bg="black", relief="ridge", width=200, heigh
 frame2 = Frame(root, borderwidth=3, bg="yellow", relief="ridge", width=50, height=25) #Zone1
 frame3 = Frame(root, borderwidth=3, bg="Yellow", relief="ridge", width=50, height=25) #Zone2
 frame4 = Frame(root, borderwidth=5, bg="black", relief="ridge", width=200, height=4)  #Divider2
-frameA = Frame(root, borderwidth=3, bg="Yellow", relief="ridge", width=50, height=25) #G/H Fan
-frameB = Frame(root, borderwidth=3, bg="Yellow", relief="ridge", width=50, height=25) #Case Fan
-frame5 = Frame(root, borderwidth=5, bg="black", relief="ridge", width=200, height=4)  #Divider3
-frameC = Frame(root, borderwidth=5, bg="black", relief="ridge", width=200, height=4)  #Divider4
-frame6 = Frame(root, borderwidth=7, relief="ridge", width=350, height=275) #Camera Frame1
-frame7 = Frame(root, borderwidth=7, relief="ridge", width=350, height=275) #Camera Frame2
+frame5 = Frame(root, borderwidth=3, bg="Yellow", relief="ridge", width=50, height=25) #G/H Fan
+frame6 = Frame(root, borderwidth=3, bg="Yellow", relief="ridge", width=50, height=25) #Case Fan
+frame7 = Frame(root, borderwidth=5, bg="black", relief="ridge", width=200, height=4)  #Divider3
+frame8 = Frame(root, borderwidth=5, bg="black", relief="ridge", width=200, height=4)  #Divider4
+frame9 = Frame(root, borderwidth=7, relief="ridge", width=350, height=275) #Camera Frame1
+frame10 = Frame(root, borderwidth=7, relief="ridge", width=350, height=275)#Camera Frame2
 #Frame grids
 frame1.grid(row=7, column=0, columnspan=2, rowspan=1, sticky=W)  #Divider1
 frame2.grid(row=10, column=0, columnspan=2, rowspan=1, sticky=W) #Zone1
 frame3.grid(row=12, column=0, columnspan=2, rowspan=1, sticky=W) #Zone2
 frame4.grid(row=13, column=0, columnspan=2, rowspan=1, sticky=W) #Divider2
-frameA.grid(row=17, column=0, columnspan=2, rowspan=1, sticky=W) #G/H Fan
-frameB.grid(row=19, column=0, columnspan=2, rowspan=1, sticky=W) #Case Fan
-frame5.grid(row=23, column=0, columnspan=2, rowspan=1, sticky=W) #Divider3
-frameC.grid(row=33, column=0, columnspan=2, rowspan=1, sticky=W) #Divider4
-frame6.grid(row=0, column=5, columnspan=2, rowspan=18)           #Camera Frame1
-frame7.grid(row=16, column=5, columnspan=2, rowspan=18)          #Camera Frame2
+frame5.grid(row=17, column=0, columnspan=2, rowspan=1, sticky=W) #G/H Fan
+frame6.grid(row=19, column=0, columnspan=2, rowspan=1, sticky=W) #Case Fan
+frame7.grid(row=23, column=0, columnspan=2, rowspan=1, sticky=W) #Divider3
+frame8.grid(row=33, column=0, columnspan=2, rowspan=1, sticky=W) #Divider4
+frame9.grid(row=0, column=5, columnspan=2, rowspan=18)           #Camera Frame1
+frame10.grid(row=16, column=5, columnspan=2, rowspan=18)         #Camera Frame2
 
 #Text
 #Zone1 On
@@ -163,11 +164,11 @@ def b1_on_off_auto():
          relay_ch1_off()
          frame2["bg"] = "black"
          T9.insert("1.0", "Zone1 Off\n")
-         print "Zone1 Off"                                  
+         print "Zone1 Off"         
     else:
          B1["text"] = "Auto"
          Zone1Timer()
-         frame2["bg"] = "Yellow"
+         frame2["bg"] = "yellow"
          T9.insert("1.0", "Zone1 Auto\n")
          print "Zone1 Auto"
 B1=Button(root, text="Auto", command=b1_on_off_auto, width=4, height=1)
@@ -191,24 +192,62 @@ def b2_on_off_auto():
          B2["text"] = "Auto"
          Zone2Timer()
          frame3["bg"] = "yellow"
-         T9.insert("1.0", "Moisture Auto\n")
-         print "Zone2 Auto"                  
+         T9.insert("1.0", "Zone2 Auto\n")
+         print "Zone2 Auto"
 B2=Button(root, text="Auto", command=b2_on_off_auto, width=4, height=1)
 B2.grid(row=12, column=1, sticky=W)
 
 #G/H Fan
-B3=Button(root, text="Auto", command=b2_on_off_auto, width=4, height=1)
+def b3_on_off_auto():
+    if B3["text"] == "Auto":
+        B3["text"] = "On"
+        relay_ch3_on()
+        frame5["bg"] = "red"
+        T9.insert("1.0", "G/H Fan On\n")
+        print "G/H Fan On"                
+    elif B3["text"] == "On":
+         B3["text"] = "Off"
+         relay_ch3_off()
+         frame5["bg"] = "black"
+         T9.insert("1.0", "G/H Fan Off\n")
+         print "G/H Fan Off"                                  
+    else:
+         B3["text"] = "Auto"
+         GH_FanAuto()
+         frame5["bg"] = "Yellow"
+         T9.insert("1.0", "G/H Fan Auto\n")
+         print "G/H Fan Auto"
+B3=Button(root, text="Auto", command=b3_on_off_auto, width=4, height=1)
 B3.grid(row=17, column=1, sticky=W)
 
 #Case Fan
-B4=Button(root, text="Auto", command=b2_on_off_auto, width=4, height=1)
+def b4_on_off_auto():
+    if B4["text"] == "Auto":
+        B4["text"] = "On"
+        relay_ch4_on()
+        frame6["bg"] = "red"
+        T9.insert("1.0", "Case Fan On\n")
+        print "Case Fan On"                
+    elif B4["text"] == "On":
+         B4["text"] = "Off"
+         relay_ch4_off()
+         frame6["bg"] = "black"
+         T9.insert("1.0", "Case Fan Off\n")
+         print "Case Fan Off"                                  
+    else:
+         B4["text"] = "Auto"
+         CaseFanAuto()
+         frame6["bg"] = "Yellow"
+         T9.insert("1.0", "Case Fan Auto\n")
+         print "Case Fan Auto"
+B4=Button(root, text="Auto", command=b4_on_off_auto, width=4, height=1)
 B4.grid(row=19, column=1, sticky=W)
 
 def zone1_start():
     global T1_get_data
     T1_get_data = T1.get("1.0",END)
     T1_data = datetime.strptime(T1_get_data.rstrip('\n'), "%H%M").time()
-    T9.insert("1.0", "Zone1 start %s\n" % T1_data)
+    T9.insert("1.0", "Zone1 Start %s\n" % T1_data)
     
 B5=Button(root, text="Enter", command=zone1_start, width=4, height=1)
 B5.grid(row=25, column=2, sticky=W)
@@ -217,7 +256,7 @@ def zone1_stop():
     global T2_get_data
     T2_get_data = T2.get("1.0",END)
     T2_data = datetime.strptime(T2_get_data.rstrip('\n'), "%H%M").time()
-    T9.insert("1.0", "Zone1 stop %s\n" % T2_data)
+    T9.insert("1.0", "Zone1 Stop %s\n" % T2_data)
 
 B6=Button(root, text="Enter", command=zone1_stop, width=4, height=1)
 B6.grid(row=26, column=2, sticky=W)
@@ -226,7 +265,7 @@ def zone2_start():
     global T3_get_data
     T3_get_data = T3.get("1.0",END)
     T3_data = datetime.strptime(T3_get_data.rstrip('\n'), "%H%M").time()
-    T9.insert("1.0", "Zone2 start %s\n" % T3_data)
+    T9.insert("1.0", "Zone2 Start  %s\n" % T3_data)
     
 B7=Button(root, text="Enter", command=zone2_start, width=4, height=1)
 B7.grid(row=27, column=2, sticky=W)
@@ -235,7 +274,7 @@ def zone2_stop():
     global T4_get_data
     T4_get_data = T4.get("1.0",END)
     T4_data = datetime.strptime(T4_get_data.rstrip('\n'), "%H%M").time()
-    T9.insert("1.0", "Zone2 stop %s\n" % T4_data)
+    T9.insert("1.0", "Zone2 Stop %s\n" % T4_data)
     
 B8=Button(root, text="Enter", command=zone2_stop, width=4, height=1)
 B8.grid(row=28, column=2, sticky=W)
@@ -244,7 +283,7 @@ def gh_fan_start():
     global T5_get_data
     T5_get_data = T5.get("1.0",END)
     T5_data = T5_get_data.rstrip('\n')
-    T9.insert("1.0", "G/H fan start %s\n" % T5_data)
+    T9.insert("1.0", "G/H Fan Start %s\n" % T5_data)
     
 B9=Button(root, text="Enter", command=gh_fan_start, width=4, height=1)
 B9.grid(row=29, column=2, sticky=W)
@@ -253,7 +292,7 @@ def gh_fan_stop():
     global T6_get_data
     T6_get_data = T6.get("1.0",END)
     T6_data = T6_get_data.rstrip('\n')
-    T9.insert("1.0", "G/H fan stop %s\n" % T6_data)
+    T9.insert("1.0", "G/H Fan Stop %s\n" % T6_data)
     
 B10=Button(root, text="Enter", command=gh_fan_stop, width=4, height=1)
 B10.grid(row=30, column=2, sticky=W)
@@ -262,7 +301,7 @@ def case_fan_start():
     global T7_get_data
     T7_get_data = T5.get("1.0",END)
     T7_data = T7_get_data.rstrip('\n')
-    T9.insert("1.0", "Case fan start %s\n" % T7_data)
+    T9.insert("1.0", "Case Fan Start %s\n" % T7_data)
     
 B11=Button(root, text="Enter", command=case_fan_start, width=4, height=1)
 B11.grid(row=31, column=2, sticky=W)
@@ -271,22 +310,22 @@ def case_fan_stop():
     global T8_get_data
     T8_get_data = T8.get("1.0",END)
     T8_data = T8_get_data.rstrip('\n')
-    T9.insert("1.0", "Case fan stop %s\n" % T8_data)
+    T9.insert("1.0", "Case Fan Stop %s\n" % T8_data)
     
 B12=Button(root, text="Enter", command=case_fan_stop, width=4, height=1)
 B12.grid(row=32, column=2, sticky=W)
 
 def close():
     #set relay gpio's to false
-    gpio.output(5, True) # relay 1
-    gpio.output(6, True) # relay 2
-    gpio.output(16, True) # relay 3
-    gpio.output(26, True) # relay 4
+    gpio.output(5, False) # relay 1
+    gpio.output(6, False) # relay 2
+    gpio.output(16, False) # relay 3
+    gpio.output(26, False) # relay 4
     gpio.cleanup()
     quit()
     print "Close Script"
     
-B13=Button(root, text="Close", command=sys.exit, width=4, height=1)
+B13=Button(root, text="Close", command=close, width=4, height=1)
 B13.grid(row=36, column=0, sticky=W)
 
 #Timer controlled irrigation relay_ch1 
@@ -308,7 +347,7 @@ def Zone1Timer():
        frame2["bg"] = "yellow"
        print "Zone1 Off"
        
-#Timer controlled irrigation relay_ch2
+#Timer controlled irrigation // relay_ch2
 def Zone2Timer():
     c_time = T3_get_data
     zone2_start = datetime.strptime(c_time.rstrip('\n'), "%H%M").time()
@@ -319,14 +358,34 @@ def Zone2Timer():
     print zone2_stop
     
     if datetime.now().time() >= zone2_start and datetime.now().time() <= zone2_stop:
-       relay_ch1_on()
-       frame2["bg"] = "red"
+       relay_ch2_on()
+       frame3["bg"] = "red"
        print "Zone2 On"
     else:
-       relay_ch1_off()
-       frame2["bg"] = "yellow"
+       relay_ch2_off()
+       frame3["bg"] = "yellow"
        print "Zone2 Off"
-       
+    
+#Temperature controlled Green House fan // relay_ch3
+def GH_FanAuto():
+    gh_fan_temp = Adafruit_DHT.read_retry(22, 18)
+    e_time = T5_get_data
+    gh_fan_temp_min = e_time.rstrip('\n')
+    print gh_fan_temp_min
+
+    f_time = T6_get_data
+    gh_fan_temp_max = f_time.rstrip('\n')
+    print gh_fan_temp_max
+    
+    if gh_fan_temp >= gh_fan_temp_min and gh_fan_temp <= gh_fan_temp_max:
+       relay_ch3_on()
+       frame5["bg"] = "red"
+       print "G/H Fan On"
+    else:
+       relay_ch3_off()
+       frame5["bg"] = "yellow"
+       print "G/H Fan Off"
+
 # Functions for Case temp sensor
 def temp_raw():
 
@@ -346,6 +405,39 @@ def read_temp():
         temp_c = float(temp_string) / 1000.0
         return temp_c       
 
+#Temperature controlled Green Case fan // relay_ch4
+def CaseFanAuto():
+    global read_temp
+    case_fan_temp = read_temp()
+    g_time = T7_get_data
+    case_fan_temp_min = g_time.rstrip('\n')
+    print case_fan_temp_min
+
+    h_time = T8_get_data
+    case_fan_temp_max = h_time.rstrip('\n')
+    print case_fan_temp_max
+    
+    if case_fan_temp >= case_fan_temp_min and case_fan_temp <= case_fan_temp_max:
+       relay_ch4_on()
+       frame6["bg"] = "red"
+       print "Case Fan On"
+    else:
+       relay_ch4_off()
+       frame6["bg"] = "yellow"
+       print "Case Fan Off"
+
+# RPI CPU Temprature
+def getTempCPU():
+    temp = commands.getoutput("/opt/vc/bin/vcgencmd measure_temp")
+    initTempPos = str(temp).find("=")
+    finishTempPos = str(temp).find("'")
+    temp = str(temp)[initTempPos+1:finishTempPos]
+    try:
+        temp_num = float(temp)
+        return temp_num
+    except:
+        print "Unable to transform to float"
+       
 # Function to read SPI data from MCP3008 chip
 def ReadChannel(channel):
    adc = spi.xfer2([1,(8+channel)<<4,0])
@@ -354,27 +446,27 @@ def ReadChannel(channel):
        
 # Zone1 relay ch1 on and off
 def relay_ch1_on():
-    gpio.output(5, True) #Relay ch1 on
+    gpio.output(5, False) #Relay ch1 on
 def relay_ch1_off(): 
-    gpio.output(5, False) #Relay ch1 off
+    gpio.output(5, True) #Relay ch1 off
 
 # Zone2 relay ch2 on and off
 def relay_ch2_on():
-    gpio.output(6, True) #Relay ch2 on
+    gpio.output(6, False) #Relay ch2 on
 def relay_ch2_off(): 
-    gpio.output(6, False) #Relay ch2 off
+    gpio.output(6, True) #Relay ch2 off
 
 # G/H fan relay ch3 on and off
 def relay_ch3_on():
-    gpio.output(16, True) #Relay ch3 on
+    gpio.output(16, False) #Relay ch3 on
 def relay_ch3_off(): 
-    gpio.output(16, False) #Relay ch3 off
+    gpio.output(16, True) #Relay ch3 off
 
 # Case fan relay ch4 on and off
 def relay_ch4_on():
-    gpio.output(26, True) #Relay ch4 on
+    gpio.output(26, False) #Relay ch4 on
 def relay_ch4_off(): 
-    gpio.output(26, False) #Relay ch4 off
+    gpio.output(26, True) #Relay ch4 off
     
 lcd = Adafruit_CharLCD()
 lcd.begin(16, 1)
@@ -394,14 +486,17 @@ def updates():
     global counter
     global temperature
     global read_temp
+    global gettempCPU
     global humidity
     global moisture
            
     #Import Humidity and Temperature from AdafruitDHT // 30 second refresh rate
     if counter % 30 == 0:
         humidity, temperature = Adafruit_DHT.read_retry(22, 18)
-        casetemp.set ('%dC' % read_temp())
-    #Import moisture from moisture sensor // 1 second refresh rate
+    #Import Case Temperature from DS18B20 digital temperature sensor // 30 second refresh rate
+        casetemp.set ('%0.1fC' % read_temp())
+        cputemp.set  ('%0.1fC' % getTempCPU())
+    #Import moisture from moisture sensors // 1 second refresh rate
     moisture1 = ReadChannel(2)
     moisture2 = ReadChannel(3)
     
@@ -422,7 +517,6 @@ def updates():
     #GUI updates
     clock.set (datetime.now().time().strftime('%H:%M:%S '))
     temp.set ('%0.1fC' % temperature)
-    #casetemp.set ('%dC' % read_temp())
     hum.set ('%0.1f%%' % humidity)
     moist1.set ('%d' % moisture1)
     moist2.set ('%d' % moisture2)
@@ -431,8 +525,8 @@ def updates():
            
 Zone1Timer()
 Zone2Timer()
-#temp_raw()
-#read_temp()
+GH_FanAuto()
+CaseFanAuto()
 gui_widgets()
 root.after(1000, updates)   
 
