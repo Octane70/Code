@@ -17,6 +17,10 @@ import spidev
 import RPi.GPIO as gpio
 import commands
 
+lcd = Adafruit_CharLCD()
+lcd.begin(16, 1)
+counter = 0
+
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
 
@@ -32,6 +36,12 @@ gpio.setup(5, gpio.OUT) # relay 1
 gpio.setup(6, gpio.OUT) # relay 2
 gpio.setup(16, gpio.OUT) # relay 3
 gpio.setup(26, gpio.OUT) # relay 4
+
+#set relay gpio's to false
+gpio.output(5, True) # relay 1
+gpio.output(6, True) # relay 2
+gpio.output(16, True) # relay 3
+gpio.output(26, True) # relay 4
 
 #GUI window
 root = Tk()   
@@ -130,11 +140,11 @@ T6.insert("1.0", "25\n") #Default value
 T6.grid(row=30, column=1, sticky=W)
 #Case Fan On
 T7 = Text(root, width=10, height=1)
-T7.insert("1.0", "35\n") #Default value
+T7.insert("1.0", "25.0\n") #Default value
 T7.grid(row=31, column=1, sticky=W)
 #Case Fan Off
 T8 = Text(root, width=10, height=1)
-T8.insert("1.0", "25\n") #Default value
+T8.insert("1.0", "18.0\n") #Default value
 T8.grid(row=32, column=1, sticky=W)
 #Output Display
 T9 = Text(root, width=28, height=8)
@@ -201,13 +211,13 @@ B2.grid(row=12, column=1, sticky=W)
 def b3_on_off_auto():
     if B3["text"] == "Auto":
         B3["text"] = "On"
-        relay_ch3_on()
+        relay_ch4_on()
         frame5["bg"] = "red"
         T9.insert("1.0", "G/H Fan On\n")
         print "G/H Fan On"                
     elif B3["text"] == "On":
          B3["text"] = "Off"
-         relay_ch3_off()
+         relay_ch4_off()
          frame5["bg"] = "black"
          T9.insert("1.0", "G/H Fan Off\n")
          print "G/H Fan Off"                                  
@@ -224,13 +234,13 @@ B3.grid(row=17, column=1, sticky=W)
 def b4_on_off_auto():
     if B4["text"] == "Auto":
         B4["text"] = "On"
-        relay_ch4_on()
+        relay_ch3_on()
         frame6["bg"] = "red"
         T9.insert("1.0", "Case Fan On\n")
         print "Case Fan On"                
     elif B4["text"] == "On":
          B4["text"] = "Off"
-         relay_ch4_off()
+         relay_ch3_off()
          frame6["bg"] = "black"
          T9.insert("1.0", "Case Fan Off\n")
          print "Case Fan Off"                                  
@@ -299,7 +309,7 @@ B10.grid(row=30, column=2, sticky=W)
 
 def case_fan_start():
     global T7_get_data
-    T7_get_data = T5.get("1.0",END)
+    T7_get_data = T7.get("1.0",END)
     T7_data = T7_get_data.rstrip('\n')
     T9.insert("1.0", "Case Fan Start %s\n" % T7_data)
     
@@ -328,7 +338,7 @@ def close():
 B13=Button(root, text="Close", command=close, width=4, height=1)
 B13.grid(row=36, column=0, sticky=W)
 
-#Timer controlled irrigation relay_ch1 
+#Timer controlled irrigation Zone 1 // relay_ch1 
 def Zone1Timer():
     a_time = T1_get_data
     zone1_start = datetime.strptime(a_time.rstrip('\n'), "%H%M").time()
@@ -347,7 +357,7 @@ def Zone1Timer():
        frame2["bg"] = "yellow"
        print "Zone1 Off"
        
-#Timer controlled irrigation // relay_ch2
+#Timer controlled irrigation Zone 2 // relay_ch2
 def Zone2Timer():
     c_time = T3_get_data
     zone2_start = datetime.strptime(c_time.rstrip('\n'), "%H%M").time()
@@ -365,8 +375,8 @@ def Zone2Timer():
        relay_ch2_off()
        frame3["bg"] = "yellow"
        print "Zone2 Off"
-    
-#Temperature controlled Green House fan // relay_ch3
+
+#Temperature controlled Green House fan // relay_ch4
 def GH_FanAuto():
     gh_fan_temp = Adafruit_DHT.read_retry(22, 18)
     e_time = T5_get_data
@@ -378,14 +388,14 @@ def GH_FanAuto():
     print gh_fan_temp_max
     
     if gh_fan_temp >= gh_fan_temp_min and gh_fan_temp <= gh_fan_temp_max:
-       relay_ch3_on()
+       relay_ch4_on()
        frame5["bg"] = "red"
        print "G/H Fan On"
     else:
-       relay_ch3_off()
+       relay_ch4_off()
        frame5["bg"] = "yellow"
        print "G/H Fan Off"
-
+       
 # Functions for Case temp sensor
 def temp_raw():
 
@@ -405,10 +415,13 @@ def read_temp():
         temp_c = float(temp_string) / 1000.0
         return temp_c       
 
-#Temperature controlled Green Case fan // relay_ch4
+#Temperature controlled Case fan // relay_ch3
 def CaseFanAuto():
-    global read_temp
-    case_fan_temp = read_temp()
+    global case_fan_temp
+    if counter % 20 == 0:
+       case_fan_data = read_temp()
+       case_fan_temp = ('%0.1f' % case_fan_data)
+       print case_fan_temp
     g_time = T7_get_data
     case_fan_temp_min = g_time.rstrip('\n')
     print case_fan_temp_min
@@ -417,12 +430,12 @@ def CaseFanAuto():
     case_fan_temp_max = h_time.rstrip('\n')
     print case_fan_temp_max
     
-    if case_fan_temp >= case_fan_temp_min and case_fan_temp <= case_fan_temp_max:
-       relay_ch4_on()
+    if case_fan_temp >= case_fan_temp_max:   
+       relay_ch3_on()
        frame6["bg"] = "red"
        print "Case Fan On"
-    else:
-       relay_ch4_off()
+    elif case_fan_temp <= case_fan_temp_min:
+       relay_ch3_off()
        frame6["bg"] = "yellow"
        print "Case Fan Off"
 
@@ -468,9 +481,7 @@ def relay_ch4_on():
 def relay_ch4_off(): 
     gpio.output(26, True) #Relay ch4 off
     
-lcd = Adafruit_CharLCD()
-lcd.begin(16, 1)
-counter = 0
+
 
 def gui_widgets():
    Label(root, textvariable=clock, font=('Times', 20, 'bold')).grid(row=0,column=0,sticky=W)
@@ -486,15 +497,18 @@ def updates():
     global counter
     global temperature
     global read_temp
-    global gettempCPU
+    global getTempCPU
     global humidity
     global moisture
            
     #Import Humidity and Temperature from AdafruitDHT // 30 second refresh rate
     if counter % 30 == 0:
         humidity, temperature = Adafruit_DHT.read_retry(22, 18)
-    #Import Case Temperature from DS18B20 digital temperature sensor // 30 second refresh rate
+    #Import Case Temperature from DS18B20 digital temperature sensor // 20 second refresh rate
+    if counter % 20 == 0:
         casetemp.set ('%0.1fC' % read_temp())
+    #Import CPU Temperature // 10 second refresh rate    
+    if counter % 10 == 0:    
         cputemp.set  ('%0.1fC' % getTempCPU())
     #Import moisture from moisture sensors // 1 second refresh rate
     moisture1 = ReadChannel(2)
@@ -507,6 +521,10 @@ def updates():
     #Zone 2
     if B2["text"] == "Auto":
        Zone2Timer()
+
+    #Case Fan
+    if B4["text"] == "Auto":
+       CaseFanAuto()   
               
     #LCD updates  
     lcd.clear()
