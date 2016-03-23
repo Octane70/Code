@@ -116,19 +116,19 @@ frame10.grid(row=16, column=5, columnspan=2, rowspan=18)         #Camera Frame2
 #Text
 #Zone1 On
 T1 = Text(root, width=10, height=1)
-T1.insert("1.0", "0700\n") #Default value
+T1.insert("1.0", "0630\n") #Default value
 T1.grid(row=25, column=1, sticky=W)
 #Zone1 Off
 T2 = Text(root, width=10, height=1)
-T2.insert("1.0", "0730\n") #Default value
+T2.insert("1.0", "0700\n") #Default value
 T2.grid(row=26, column=1, sticky=W)
 #Zone2 On
 T3 = Text(root, width=10, height=1)
-T3.insert("1.0", "0700\n") #Default value
+T3.insert("1.0", "1700\n") #Default value
 T3.grid(row=27, column=1, sticky=W)
 #Zone2 Off
 T4 = Text(root, width=10, height=1)
-T4.insert("1.0", "0730\n") #Default value
+T4.insert("1.0", "1730\n") #Default value
 T4.grid(row=28, column=1, sticky=W)
 #G/H Fan On
 T5 = Text(root, width=10, height=1)
