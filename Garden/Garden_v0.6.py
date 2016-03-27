@@ -5,22 +5,21 @@
 #300~700 : humid soil
 #700~950 : in water
 
-#from Adafruit_CharLCD import Adafruit_CharLCD
+from Adafruit_CharLCD import Adafruit_CharLCD
 import subprocess
 from time import sleep, strftime
 from datetime import datetime
 from Tkinter import *
-
 import sys
-#import Adafruit_DHT
+import Adafruit_DHT
 import os
 import spidev
-#import RPi.GPIO as gpio
+import RPi.GPIO as gpio
 import commands
 import signal
 
-#lcd = Adafruit_CharLCD()
-#lcd.begin(16, 1)
+lcd = Adafruit_CharLCD()
+lcd.begin(16, 1)
 counter = 0
 
 os.system('modprobe w1-gpio')
@@ -28,23 +27,22 @@ os.system('modprobe w1-therm')
 
 temp_sensor = '/sys/bus/w1/devices/28-0000060e26f0/w1_slave'
 
-
 # Open SPI bus
 spi = spidev.SpiDev()
 spi.open(0,0)
 
 # Initiate gpio's for relay
-#gpio.setmode(gpio.BCM)
-#gpio.setup(5, gpio.OUT) # relay 1
-#gpio.setup(6, gpio.OUT) # relay 2
-#gpio.setup(16, gpio.OUT) # relay 3
-#gpio.setup(26, gpio.OUT) # relay 4
+gpio.setmode(gpio.BCM)
+gpio.setup(5, gpio.OUT) # relay 1
+gpio.setup(6, gpio.OUT) # relay 2
+gpio.setup(16, gpio.OUT) # relay 3
+gpio.setup(26, gpio.OUT) # relay 4
 
 #set relay gpio's to false
-#gpio.output(5, True) # relay 1
-#gpio.output(6, True) # relay 2
-#gpio.output(16, True) # relay 3
-#gpio.output(26, True) # relay 4
+gpio.output(5, True) # relay 1
+gpio.output(6, True) # relay 2
+gpio.output(16, True) # relay 3
+gpio.output(26, True) # relay 4
 
 #GUI window
 root = Tk()   
@@ -107,22 +105,22 @@ cputemp = StringVar()
 casetemp = StringVar()
 
 #Frames
-frame1 = Frame(window1, borderwidth=5, bg="grey", relief="ridge", width=150, height=4)  #Divider1 
+frame1 = Frame(window1, borderwidth=5, bg="grey", relief="ridge", width=150, height=4)   #Divider1 
 frame2 = Frame(window2, borderwidth=3, bg="yellow", relief="ridge", width=50, height=25) #Zone1
 frame3 = Frame(window2, borderwidth=3, bg="Yellow", relief="ridge", width=50, height=25) #Zone2
-frame4 = Frame(window2, borderwidth=5, bg="grey", relief="ridge", width=195, height=4)  #Divider2
+frame4 = Frame(window2, borderwidth=5, bg="grey", relief="ridge", width=195, height=4)   #Divider2
 frame5 = Frame(window2, borderwidth=3, bg="Yellow", relief="ridge", width=50, height=25) #G/H Fan
 frame6 = Frame(window2, borderwidth=3, bg="Yellow", relief="ridge", width=50, height=25) #Case Fan
-frame7 = Frame(window3, borderwidth=5, bg="grey", relief="ridge", width=250, height=4)  #Divider3
+frame7 = Frame(window3, borderwidth=5, bg="grey", relief="ridge", width=250, height=4)   #Divider3
 
 #Frame grids
 frame1.grid(row=7, column=0, columnspan=2, rowspan=1, sticky=W)  #Divider1
-frame2.grid(row=2, column=0, columnspan=1, rowspan=1, sticky=W) #Zone1
-frame3.grid(row=4, column=0, columnspan=1, rowspan=1, sticky=W) #Zone2
-frame4.grid(row=5, column=0, columnspan=2, rowspan=1, sticky=W) #Divider2
-frame5.grid(row=8, column=0, columnspan=1, rowspan=1, sticky=W) #G/H Fan
+frame2.grid(row=2, column=0, columnspan=1, rowspan=1, sticky=W)  #Zone1
+frame3.grid(row=4, column=0, columnspan=1, rowspan=1, sticky=W)  #Zone2
+frame4.grid(row=5, column=0, columnspan=2, rowspan=1, sticky=W)  #Divider2
+frame5.grid(row=8, column=0, columnspan=1, rowspan=1, sticky=W)  #G/H Fan
 frame6.grid(row=10, column=0, columnspan=1, rowspan=1, sticky=W) #Case Fan
-frame7.grid(row=9, column=0, columnspan=4, rowspan=1, sticky=W) #Divider3
+frame7.grid(row=9, column=0, columnspan=4, rowspan=1, sticky=W)  #Divider3
 
 
 #Text
@@ -357,11 +355,11 @@ B13.grid(row=9, column=0, sticky=W)
 def close():
     global proc
     #set relay gpio's to false
-    #gpio.output(5, False) # relay 1
-    #gpio.output(6, False) # relay 2
-    #gpio.output(16, False) # relay 3
-    #gpio.output(26, False) # relay 4
-    #gpio.cleanup()
+    gpio.output(5, False) # relay 1
+    gpio.output(6, False) # relay 2
+    gpio.output(16, False) # relay 3
+    gpio.output(26, False) # relay 4
+    gpio.cleanup()
     os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
     quit()
     print "Close Script"
@@ -380,11 +378,11 @@ def Zone1Timer():
     print zone1_stop
     
     if datetime.now().time() >= zone1_start and datetime.now().time() <= zone1_stop:
-       #relay_ch1_on()
+       relay_ch1_on()
        frame2["bg"] = "red"
        print "Zone1 On"
     else:
-       #relay_ch1_off()
+       relay_ch1_off()
        frame2["bg"] = "yellow"
        print "Zone1 Off"
        
@@ -399,17 +397,17 @@ def Zone2Timer():
     print zone2_stop
     
     if datetime.now().time() >= zone2_start and datetime.now().time() <= zone2_stop:
-       #relay_ch2_on()
+       relay_ch2_on()
        frame3["bg"] = "red"
        print "Zone2 On"
     else:
-       #relay_ch2_off()
+       relay_ch2_off()
        frame3["bg"] = "yellow"
        print "Zone2 Off"
 
 #Temperature controlled Green House fan // relay_ch4
 def GH_FanAuto():
-    #gh_fan_temp = Adafruit_DHT.read_retry(22, 18)
+    gh_fan_temp = Adafruit_DHT.read_retry(22, 18)
     e_time = T5_get_data
     gh_fan_temp_min = e_time.rstrip('\n')
     print gh_fan_temp_min
@@ -418,58 +416,57 @@ def GH_FanAuto():
     gh_fan_temp_max = f_time.rstrip('\n')
     print gh_fan_temp_max
     
-    #if gh_fan_temp >= gh_fan_temp_min and gh_fan_temp <= gh_fan_temp_max:
-       #relay_ch4_on()
-       #frame5["bg"] = "red"
-       #print "G/H Fan On"
-    #else:
-       #relay_ch4_off()
-       #frame5["bg"] = "yellow"
-       #print "G/H Fan Off"
+    if gh_fan_temp >= gh_fan_temp_min and gh_fan_temp <= gh_fan_temp_max:
+       relay_ch4_on()
+       frame5["bg"] = "red"
+       print "G/H Fan On"
+    else:
+       relay_ch4_off()
+       frame5["bg"] = "yellow"
+       print "G/H Fan Off"
        
 # Functions for Case temp sensor
-#def temp_raw():
+def temp_raw():
+    f = open(temp_sensor, 'r')
+    lines = f.readlines()
+    f.close()
+    return lines
 
-    #f = open(temp_sensor, 'r')
-    #lines = f.readlines()
-    #f.close()
-    #return lines
-
-#def read_temp():
-    #lines = temp_raw()
-    #while lines[0].strip()[-3:] != 'YES':
-        #time.sleep(0.2)
-        #lines = temp_raw()
-    #temp_output = lines[1].find('t=')
-    #if temp_output != -1:
-        #temp_string = lines[1].strip()[temp_output+2:]
-        #temp_c = float(temp_string) / 1000.0
-        #return temp_c       
+def read_temp():
+    lines = temp_raw()
+    while lines[0].strip()[-3:] != 'YES':
+        time.sleep(0.2)
+        lines = temp_raw()
+    temp_output = lines[1].find('t=')
+    if temp_output != -1:
+        temp_string = lines[1].strip()[temp_output+2:]
+        temp_c = float(temp_string) / 1000.0
+        return temp_c       
 
 #Temperature controlled Case fan // relay_ch3
-#def CaseFanAuto():
-    #global case_fan_temp
-    #if counter % 20 == 0:
-       #case_fan_data = read_temp()
-       #case_fan_temp = ('%0.1f' % case_fan_data)
-       #print case_fan_temp
-    #g_time = T7_get_data
-    #case_fan_temp_min = g_time.rstrip('\n')
-    #print case_fan_temp_min
+def CaseFanAuto():
+    global case_fan_temp
+    if counter % 20 == 0:
+       case_fan_data = read_temp()
+       case_fan_temp = ('%0.1f' % case_fan_data)
+       print case_fan_temp
+    g_time = T7_get_data
+    case_fan_temp_max = g_time.rstrip('\n')
+    print case_fan_temp_max
 
-    #h_time = T8_get_data
-    #case_fan_temp_max = h_time.rstrip('\n')
-    #print case_fan_temp_max
+    h_time = T8_get_data
+    case_fan_temp_min = h_time.rstrip('\n')
+    print case_fan_temp_min
     
-    #if case_fan_temp >= case_fan_temp_max:   
-       #relay_ch3_on()
-       #frame6["bg"] = "red"
-       #print "Case Fan On"
-    #elif case_fan_temp <= case_fan_temp_min:
-       #relay_ch3_off()
-       #frame6["bg"] = "yellow"
-       #print "Case Fan Off"
-
+    if case_fan_temp >= case_fan_temp_max:   
+       relay_ch3_on()
+       frame6["bg"] = "red"
+       print "Case Fan On"
+    elif case_fan_temp <= case_fan_temp_min:
+       relay_ch3_off()
+       frame6["bg"] = "yellow"
+       print "Case Fan Off"
+   
 # RPI CPU Temprature
 def getTempCPU():
     temp = commands.getoutput("/opt/vc/bin/vcgencmd measure_temp")
@@ -489,28 +486,28 @@ def ReadChannel(channel):
    return data
        
 # Zone1 relay ch1 on and off
-#def relay_ch1_on():
-    #gpio.output(5, False) #Relay ch1 on
-#def relay_ch1_off(): 
-    #gpio.output(5, True) #Relay ch1 off
+def relay_ch1_on():
+    gpio.output(5, False) #Relay ch1 on
+def relay_ch1_off(): 
+    gpio.output(5, True) #Relay ch1 off
 
 # Zone2 relay ch2 on and off
-#def relay_ch2_on():
-    #gpio.output(6, False) #Relay ch2 on
-#def relay_ch2_off(): 
-    #gpio.output(6, True) #Relay ch2 off
+def relay_ch2_on():
+    gpio.output(6, False) #Relay ch2 on
+def relay_ch2_off(): 
+    gpio.output(6, True) #Relay ch2 off
 
 # G/H fan relay ch3 on and off
-#def relay_ch3_on():
-    #gpio.output(16, False) #Relay ch3 on
-#def relay_ch3_off(): 
-    #gpio.output(16, True) #Relay ch3 off
+def relay_ch3_on():
+    gpio.output(16, False) #Relay ch3 on
+def relay_ch3_off(): 
+    gpio.output(16, True) #Relay ch3 off
 
 # Case fan relay ch4 on and off
-#def relay_ch4_on():
-    #gpio.output(26, False) #Relay ch4 on
-#def relay_ch4_off(): 
-    #gpio.output(26, True) #Relay ch4 off
+def relay_ch4_on():
+    gpio.output(26, False) #Relay ch4 on
+def relay_ch4_off(): 
+    gpio.output(26, True) #Relay ch4 off
 
 
 def gui_widgets():
@@ -532,11 +529,11 @@ def updates():
     global moisture
            
     #Import Humidity and Temperature from AdafruitDHT // 30 second refresh rate
-    #if counter % 30 == 0:
-        #humidity, temperature = Adafruit_DHT.read_retry(22, 18)
+    if counter % 30 == 0:
+        humidity, temperature = Adafruit_DHT.read_retry(22, 18)
     #Import Case Temperature from DS18B20 digital temperature sensor // 20 second refresh rate
-    #if counter % 20 == 0:
-        #casetemp.set ('%0.1fC' % read_temp())
+    if counter % 20 == 0:
+        casetemp.set ('%0.1fC' % read_temp())
     #Import CPU Temperature // 10 second refresh rate    
     if counter % 10 == 0:    
         cputemp.set  ('%0.1fC' % getTempCPU())
@@ -553,31 +550,30 @@ def updates():
        Zone2Timer()
 
     #Case Fan
-    #if B4["text"] == "Auto":
-       #CaseFanAuto()   
+    if B4["text"] == "Auto":
+       CaseFanAuto()   
               
     #LCD updates  
-    #lcd.clear()
-    #lcd.message(datetime.now().time().strftime('%H:%M:%S '))
-    #lcd.message ('T=%0.1fC\n' % temperature)
-    #lcd.message ('H=%0.1f%%' % humidity)
-    #lcd.message ('  M=%d' % moisture1)
+    lcd.clear()
+    lcd.message(datetime.now().time().strftime('%H:%M:%S '))
+    lcd.message ('T=%0.1fC\n' % temperature)
+    lcd.message ('H=%0.1f%%' % humidity)
+    lcd.message ('  M=%d' % moisture1)
     #GUI updates
     clock.set (datetime.now().time().strftime('%H:%M:%S '))
-    #temp.set ('%0.1fC' % temperature)
-    #hum.set ('%0.1f%%' % humidity)
-    #moist1.set ('%d' % moisture1)
-    #moist2.set ('%d' % moisture2)
+    temp.set ('%0.1fC' % temperature)
+    hum.set ('%0.1f%%' % humidity)
+    moist1.set ('%d' % moisture1)
+    moist2.set ('%d' % moisture2)
     counter += 1
     root.after(1000, updates)
            
 Zone1Timer()
 Zone2Timer()
 GH_FanAuto()
-#CaseFanAuto()
+CaseFanAuto()
 gui_widgets()
 root.after(1000, updates)
-
 
 root.mainloop() 
 gpio.cleanup()	
