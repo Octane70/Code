@@ -67,6 +67,7 @@ B5.grid(row=2, column=2, padx=10, pady=2)
 
 #Close Camera Button
 def camera_close():
+    quit()
     print "Camera Close"
     
 B5=tk.Button(buttonFrame, text="Close", command=camera_close, width=4, height=1)
