@@ -142,11 +142,11 @@ T4.insert("1.0", "1730\n") #Default value
 T4.grid(row=4, column=1, sticky=W)
 #G/H Fan On
 T5 = Text(window3, width=10, height=1)
-T5.insert("1.0", "35\n") #Default value         
+T5.insert("1.0", "25.0\n") #Default value         
 T5.grid(row=5, column=1, sticky=W)
 #G/H Fan Off
 T6 = Text(window3, width=10, height=1)
-T6.insert("1.0", "25\n") #Default value
+T6.insert("1.0", "18.0\n") #Default value
 T6.grid(row=6, column=1, sticky=W)
 #Case Fan On
 T7 = Text(window3, width=10, height=1)
@@ -407,20 +407,26 @@ def Zone2Timer():
 
 #Temperature controlled Green House fan // relay_ch4
 def GH_FanAuto():
-    gh_fan_temp = Adafruit_DHT.read_retry(22, 18)
-    e_time = T5_get_data
-    gh_fan_temp_min = e_time.rstrip('\n')
-    print gh_fan_temp_min
+    global temperature
+    global gh_fan_temp
+    if counter % 30 == 0:
+       humidity, temperature = Adafruit_DHT.read_retry(22, 18)
+       gh_fan_temp = ('%0.1f' % temperature)
+       print gh_fan_temp
 
-    f_time = T6_get_data
-    gh_fan_temp_max = f_time.rstrip('\n')
+    e_time = T5_get_data
+    gh_fan_temp_max = e_time.rstrip('\n')
     print gh_fan_temp_max
     
-    if gh_fan_temp >= gh_fan_temp_min and gh_fan_temp <= gh_fan_temp_max:
+    f_time = T6_get_data
+    gh_fan_temp_min = f_time.rstrip('\n')
+    print gh_fan_temp_min
+    
+    if gh_fan_temp >= gh_fan_temp_max:   
        relay_ch4_on()
        frame5["bg"] = "red"
        print "G/H Fan On"
-    else:
+    elif gh_fan_temp <= gh_fan_temp_min:
        relay_ch4_off()
        frame5["bg"] = "yellow"
        print "G/H Fan Off"
@@ -450,6 +456,7 @@ def CaseFanAuto():
        case_fan_data = read_temp()
        case_fan_temp = ('%0.1f' % case_fan_data)
        print case_fan_temp
+       
     g_time = T7_get_data
     case_fan_temp_max = g_time.rstrip('\n')
     print case_fan_temp_max
@@ -548,6 +555,10 @@ def updates():
     #Zone 2
     if B2["text"] == "Auto":
        Zone2Timer()
+
+    #G/H Fan
+    if B3["text"] == "Auto":
+       GH_FanAuto()    
 
     #Case Fan
     if B4["text"] == "Auto":
