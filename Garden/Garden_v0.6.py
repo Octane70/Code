@@ -18,14 +18,18 @@ import RPi.GPIO as gpio
 import commands
 import signal
 
+#16x2 LCD
 lcd = Adafruit_CharLCD()
 lcd.begin(16, 1)
-counter = 0
 
+#Case Temperature Sensor
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
 
 temp_sensor = '/sys/bus/w1/devices/28-0000060e26f0/w1_slave'
+
+#Counter
+counter = 0
 
 # Open SPI bus
 spi = spidev.SpiDev()
@@ -360,7 +364,8 @@ def close():
     gpio.output(16, False) # relay 3
     gpio.output(26, False) # relay 4
     gpio.cleanup()
-    os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
+    if B13["text"] == "Cam On":
+       os.killpg(os.getpgid(proc.pid), signal.SIGTERM)  
     quit()
     print "Close Script"
     
@@ -411,9 +416,12 @@ def GH_FanAuto():
     global gh_fan_temp
     if counter % 30 == 0:
        humidity, temperature = Adafruit_DHT.read_retry(22, 18)
+    if temperature is not None:
        gh_fan_temp = ('%0.1f' % temperature)
        print gh_fan_temp
-
+    else:
+       print 'GUI Failed to get reading. Try again!'
+       
     e_time = T5_get_data
     gh_fan_temp_max = e_time.rstrip('\n')
     print gh_fan_temp_max
@@ -474,7 +482,7 @@ def CaseFanAuto():
        frame6["bg"] = "yellow"
        print "Case Fan Off"
    
-# RPI CPU Temprature
+# RPI CPU Temperature
 def getTempCPU():
     temp = commands.getoutput("/opt/vc/bin/vcgencmd measure_temp")
     initTempPos = str(temp).find("=")
@@ -537,13 +545,13 @@ def updates():
            
     #Import Humidity and Temperature from AdafruitDHT // 30 second refresh rate
     if counter % 30 == 0:
-        humidity, temperature = Adafruit_DHT.read_retry(22, 18)
+       humidity, temperature = Adafruit_DHT.read_retry(22, 18)
     #Import Case Temperature from DS18B20 digital temperature sensor // 20 second refresh rate
     if counter % 20 == 0:
-        casetemp.set ('%0.1fC' % read_temp())
+       casetemp.set ('%0.1fC' % read_temp())
     #Import CPU Temperature // 10 second refresh rate    
     if counter % 10 == 0:    
-        cputemp.set  ('%0.1fC' % getTempCPU())
+       cputemp.set  ('%0.1fC' % getTempCPU())
     #Import moisture from moisture sensors // 1 second refresh rate
     moisture1 = ReadChannel(2)
     moisture2 = ReadChannel(3)
@@ -567,13 +575,19 @@ def updates():
     #LCD updates  
     lcd.clear()
     lcd.message(datetime.now().time().strftime('%H:%M:%S '))
-    lcd.message ('T=%0.1fC\n' % temperature)
-    lcd.message ('H=%0.1f%%' % humidity)
+    if humidity is not None and temperature is not None:
+       lcd.message ('T=%0.1fC\n' % temperature)
+       lcd.message ('H=%0.1f%%' % humidity)
+    else:
+       print 'LCD Failed to get reading. Try again!'   
     lcd.message ('  M=%d' % moisture1)
     #GUI updates
     clock.set (datetime.now().time().strftime('%H:%M:%S '))
-    temp.set ('%0.1fC' % temperature)
-    hum.set ('%0.1f%%' % humidity)
+    if humidity is not None and temperature is not None:
+       temp.set ('%0.1fC' % temperature)
+       hum.set ('%0.1f%%' % humidity)
+    else:
+       print 'GUI Failed to get reading. Try again!'        
     moist1.set ('%d' % moisture1)
     moist2.set ('%d' % moisture2)
     counter += 1
@@ -581,7 +595,7 @@ def updates():
            
 Zone1Timer()
 Zone2Timer()
-GH_FanAuto()
+#GH_FanAuto()
 CaseFanAuto()
 gui_widgets()
 root.after(1000, updates)
