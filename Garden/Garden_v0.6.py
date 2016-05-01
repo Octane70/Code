@@ -417,7 +417,7 @@ def GH_FanAuto():
     if counter % 30 == 0:
        humidity, temperature = Adafruit_DHT.read_retry(22, 18)
     if temperature is not None:
-       gh_fan_temp = ('%0.1f' % temperature)
+       gh_fan_temp = ('%1.0f' % temperature)
        print gh_fan_temp
     else:
        print 'GUI Failed to get reading. Try again!'
@@ -462,7 +462,7 @@ def CaseFanAuto():
     global case_fan_temp
     if counter % 20 == 0:
        case_fan_data = read_temp()
-       case_fan_temp = ('%0.1f' % case_fan_data)
+       case_fan_temp = ('%1.0f' % case_fan_data)
        print case_fan_temp
        
     g_time = T7_get_data
@@ -542,16 +542,18 @@ def updates():
     global getTempCPU
     global humidity
     global moisture
+    global CPUTemp
+    global CaseTemp
            
     #Import Humidity and Temperature from AdafruitDHT // 30 second refresh rate
     if counter % 30 == 0:
        humidity, temperature = Adafruit_DHT.read_retry(22, 18)
     #Import Case Temperature from DS18B20 digital temperature sensor // 20 second refresh rate
     if counter % 20 == 0:
-       casetemp.set ('%0.1fC' % read_temp())
+       CaseTemp = read_temp()
     #Import CPU Temperature // 10 second refresh rate    
     if counter % 10 == 0:    
-       cputemp.set  ('%0.1fC' % getTempCPU())
+       CPUTemp = getTempCPU()
     #Import moisture from moisture sensors // 1 second refresh rate
     moisture1 = ReadChannel(2)
     moisture2 = ReadChannel(3)
@@ -579,15 +581,18 @@ def updates():
        lcd.message ('T=%0.1fC\n' % temperature)
        lcd.message ('H=%0.1f%%' % humidity)
     else:
-       print 'LCD Failed to get reading. Try again!'   
-    lcd.message ('  M=%d' % moisture1)
+       print 'LCD Failed to get reading. Try again!'
+    lcd.message ('  C=%0.1fC' % CaseTemp)  
+    #lcd.message ('  M=%d' % moisture1)
     #GUI updates
     clock.set (datetime.now().time().strftime('%H:%M:%S '))
     if humidity is not None and temperature is not None:
        temp.set ('%0.1fC' % temperature)
        hum.set ('%0.1f%%' % humidity)
     else:
-       print 'GUI Failed to get reading. Try again!'        
+       print 'GUI Failed to get reading. Try again!'
+    cputemp.set  ('%0.1fC' % CPUTemp)   
+    casetemp.set ('%0.1fC' % CaseTemp)
     moist1.set ('%d' % moisture1)
     moist2.set ('%d' % moisture2)
     counter += 1
@@ -595,7 +600,7 @@ def updates():
            
 Zone1Timer()
 Zone2Timer()
-#GH_FanAuto()
+GH_FanAuto()
 CaseFanAuto()
 gui_widgets()
 root.after(1000, updates)
