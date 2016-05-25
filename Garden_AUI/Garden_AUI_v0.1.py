@@ -29,16 +29,24 @@ class DemoPiUi(object):
         self.page.add_textbox("&nbsp;Watering Times:", "h2")
         self.page.add_textbox("&nbsp;Zone1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
                               "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Manual", "h2")
-        plus = self.page.add_button("Up Button &uarr;", self.onupclick)
+        plus = self.page.add_button("Auto", self.onupclick)
+        self.page.add_textbox("&nbsp;")
         self.page.add_textbox("&nbsp;Zone2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + 
                               "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Manual", "h2")
-        minus = self.page.add_button("Down Button &darr;", self.ondownclick)
-        #self.list.add_item("Static Content", chevron=True, onclick=self.page_static)
-        #self.list.add_item("Buttons", chevron=True, onclick=self.page_buttons)
-        #self.list.add_item("Input", chevron=True, onclick=self.page_input)
-        #self.list.add_item("Images", chevron=True, onclick=self.page_images)
-        #self.list.add_item("Toggles", chevron=True, onclick=self.page_toggles)
-        #self.list.add_item("Console!", chevron=True, onclick=self.page_console)
+        minus = self.page.add_button("Auto", self.ondownclick)
+        self.page.add_element("hr")
+        self.page.add_textbox("&nbsp;Cooling:", "h2")
+        self.page.add_textbox("&nbsp;G/H Fan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+                              "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Manual", "h2")
+        plus = self.page.add_button("Auto", self.onupclick)
+        self.page.add_textbox("&nbsp;")
+        self.page.add_textbox("&nbsp;Case Fan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + 
+                              "&nbsp;&nbsp;&nbsp;Manual", "h2")
+        minus = self.page.add_button("Auto", self.ondownclick)
+        self.page.add_element("hr")
+        self.page.add_textbox("&nbsp;Red = On&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+                              "&nbsp;&nbsp;&nbsp;&nbsp;Yellow = Auto", "h3")
+        self.page.add_textbox("&nbsp;Black = Off", "h3")
         self.ui.done()
 
 
