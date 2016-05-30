@@ -722,14 +722,15 @@ select {
   padding-left: 0;
   margin-bottom: 0;
   border-bottom: 0;
-}/* General button styles
+
+}/* General button styles 
 -------------------------------------------------- */
 
 [class*="button"] {
   position: relative;
   display: inline-block;
-  padding: 4px 12px;
-  /*margin: 6px;*/
+  padding: 12px 12px;
+  margin-left: 150px;
   font-weight: bold;
   line-height: 18px;
   color: #333;
@@ -747,8 +748,8 @@ select {
 
 /* Active */
 [class*="button"]:active {
-  padding-top: 5px;
-  padding-bottom: 3px;
+  padding-top: 12px;
+  padding-bottom: 12px;
   color: #333;
   background-color: #ccc;
   background-image: none;
