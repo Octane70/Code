@@ -232,6 +232,17 @@ class PiUiButton(object):
     def set_text(self, text):
         self._piui._handlers.enqueue({'cmd': 'updateinner', 'eid': self._id, 'txt': text})
 
+class PiUiFrame(object):
+
+    def __init__(self, text, piui, on_click):
+        self._piui = piui
+        self._id = 'frame_' + str(int(random.uniform(0, 1e16)))
+        self._piui._handlers.enqueue({'cmd': 'addframe', 'eid': self._id, 'txt': text})
+        self._on_click = on_click
+
+    def set_text(self, text):
+        self._piui._handlers.enqueue({'cmd': 'updateinner', 'eid': self._id, 'txt': text})        
+
 
 class PiUiImage(object):
 
@@ -289,6 +300,12 @@ class PiUiPage(object):
         self._elements.append(button)
         self._clickables[button._id] = button
         return button
+
+    def add_frame(self, text, on_click):
+        frame = PiUiFrame(text, self._piui, on_click)
+        self._elements.append(frame)
+        self._clickables[frame._id] = frame
+        return frame
 
     def add_input(self, input_type, placeholder=""):
         edit = PiUiInput(input_type, self._piui, placeholder)
