@@ -30,23 +30,23 @@ class DemoPiUi(object):
         self.page.add_textbox("&nbsp;Watering Times:", "h2")
         self.page.add_textbox("&nbsp;Zone1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
                               "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Manual", "h2")
-        frame1 = self.page.add_frame("&nbsp;", self.ondownclick)
+        frame1 = self.page.add_frame_yellow("&nbsp;", self.ondownclick)
         plus = self.page.add_button("&nbsp;&nbsp;Auto&nbsp;&nbsp;", self.onupclick)
         self.page.add_textbox("&nbsp;")
         self.page.add_textbox("&nbsp;Zone2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + 
                               "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Manual", "h2")
-        frame2 = self.page.add_frame("&nbsp;", self.ondownclick)
+        frame2 = self.page.add_frame_black("&nbsp;", self.ondownclick)
         minus = self.page.add_button("&nbsp;&nbsp;Auto&nbsp;&nbsp;", self.ondownclick)
         self.page.add_element("hr")
         self.page.add_textbox("&nbsp;Cooling:", "h2")
         self.page.add_textbox("&nbsp;G/H Fan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
                               "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Manual", "h2")
-        frame3 = self.page.add_frame("&nbsp;", self.ondownclick)
+        frame3 = self.page.add_frame_red("&nbsp;", self.ondownclick)
         plus = self.page.add_button("&nbsp;&nbsp;Auto&nbsp;&nbsp;", self.onupclick)
         self.page.add_textbox("&nbsp;")
         self.page.add_textbox("&nbsp;Case Fan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + 
                               "&nbsp;&nbsp;&nbsp;Manual", "h2")
-        frame4 = self.page.add_frame("&nbsp;", self.ondownclick)
+        frame4 = self.page.add_frame_yellow("&nbsp;", self.ondownclick)
         minus = self.page.add_button("&nbsp;&nbsp;Auto&nbsp;&nbsp;", self.ondownclick)
         self.page.add_element("hr")
         self.page.add_textbox("&nbsp;Red = On&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
