@@ -234,34 +234,31 @@ class PiUiButton(object):
 
 class PiUiFrame_Yellow(object):
 
-    def __init__(self, text, piui, on_click):
+    def __init__(self, text, piui):
         self._piui = piui
         self._id = 'frame_yellow_' + str(int(random.uniform(0, 1e16)))
         self._piui._handlers.enqueue({'cmd': 'addframe_yellow', 'eid': self._id, 'txt': text})
-        self._on_click = on_click
-
+        
     def set_text(self, text):
         self._piui._handlers.enqueue({'cmd': 'updateinner', 'eid': self._id, 'txt': text})        
 
 class PiUiFrame_Black(object):
 
-    def __init__(self, text, piui, on_click):
+    def __init__(self, text, piui):
         self._piui = piui
         self._id = 'frame_black_' + str(int(random.uniform(0, 1e16)))
         self._piui._handlers.enqueue({'cmd': 'addframe_black', 'eid': self._id, 'txt': text})
-        self._on_click = on_click
-
+       
     def set_text(self, text):
         self._piui._handlers.enqueue({'cmd': 'updateinner', 'eid': self._id, 'txt': text})
 
 class PiUiFrame_Red(object):
 
-    def __init__(self, text, piui, on_click):
+    def __init__(self, text, piui):
         self._piui = piui
         self._id = 'frame_red_' + str(int(random.uniform(0, 1e16)))
         self._piui._handlers.enqueue({'cmd': 'addframe_red', 'eid': self._id, 'txt': text})
-        self._on_click = on_click
-
+        
     def set_text(self, text):
         self._piui._handlers.enqueue({'cmd': 'updateinner', 'eid': self._id, 'txt': text})
 
@@ -322,22 +319,22 @@ class PiUiPage(object):
         self._clickables[button._id] = button
         return button
 
-    def add_frame_yellow(self, text, on_click):
-        frame_yellow = PiUiFrame_Yellow(text, self._piui, on_click)
+    def add_frame_yellow(self, text):
+        frame_yellow = PiUiFrame_Yellow(text, self._piui)
         self._elements.append(frame_yellow)
-        self._clickables[frame_yellow._id] = frame_yellow
+        #self._clickables[frame_yellow._id] = frame_yellow
         return frame_yellow
 
-    def add_frame_black(self, text, on_click):
-        frame_black = PiUiFrame_Black(text, self._piui, on_click)
+    def add_frame_black(self, text):
+        frame_black = PiUiFrame_Black(text, self._piui)
         self._elements.append(frame_black)
-        self._clickables[frame_black._id] = frame_black
+        #self._clickables[frame_black._id] = frame_black
         return frame_black
 
-    def add_frame_red(self, text, on_click):
-        frame_red = PiUiFrame_Red(text, self._piui, on_click)
+    def add_frame_red(self, text):
+        frame_red = PiUiFrame_Red(text, self._piui)
         self._elements.append(frame_red)
-        self._clickables[frame_red._id] = frame_red
+        #self._clickables[frame_red._id] = frame_red
         return frame_red
 
     def add_input(self, input_type, placeholder=""):
