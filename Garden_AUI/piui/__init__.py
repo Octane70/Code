@@ -322,19 +322,16 @@ class PiUiPage(object):
     def add_frame_yellow(self, text):
         frame_yellow = PiUiFrame_Yellow(text, self._piui)
         self._elements.append(frame_yellow)
-        #self._clickables[frame_yellow._id] = frame_yellow
         return frame_yellow
 
     def add_frame_black(self, text):
         frame_black = PiUiFrame_Black(text, self._piui)
         self._elements.append(frame_black)
-        #self._clickables[frame_black._id] = frame_black
         return frame_black
 
     def add_frame_red(self, text):
         frame_red = PiUiFrame_Red(text, self._piui)
-        self._elements.append(frame_red)
-        #self._clickables[frame_red._id] = frame_red
+        self._elements.append(frame_red)       
         return frame_red
 
     def add_input(self, input_type, placeholder=""):
