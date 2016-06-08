@@ -729,10 +729,11 @@ select {
 [class*="button"] {
   position: relative;
   display: inline-block;
-  padding: 12px 12px;
+  width: 66px;
+  height: 42px;
   margin-left: 70px;
   font-weight: bold;
-  line-height: 18px;
+  line-height: 42px;
   color: #333;
   text-align: center;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
@@ -748,8 +749,8 @@ select {
 
 /* Active */
 [class*="button"]:active {
-  padding-top: 12px;
-  padding-bottom: 12px;
+  width: 66px;
+  height: 42px;
   color: #333;
   background-color: #ccc;
   background-image: none;
