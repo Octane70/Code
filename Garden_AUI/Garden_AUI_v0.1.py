@@ -57,7 +57,8 @@ class DemoPiUi(object):
         self.page.add_textbox("&nbsp;Watering Times:", "h2")
         self.page.add_textbox("&nbsp;Zone1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
                               "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Manual", "h2")
-        self.frame1 = self.page.add_frame_yellow("&nbsp;")
+        self.frame1 = self.page.add_frame("&nbsp;").backgroundColor= "#ffff00"
+        
         self.button1 = self.page.add_button("Auto", self.b1_on_off_auto)
         self.page.add_textbox("&nbsp;")
         self.page.add_textbox("&nbsp;Zone2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + 
@@ -79,7 +80,7 @@ class DemoPiUi(object):
         self.page.add_textbox("&nbsp;Red = On&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
                               "&nbsp;&nbsp;&nbsp;&nbsp;Yellow = Auto", "h3")
         self.page.add_textbox("&nbsp;Black = Off", "h3")
-        time.sleep(2)
+        #time.sleep(2)
         self.ui.done()
 
 
@@ -92,6 +93,7 @@ class DemoPiUi(object):
         if self.bttn1 == "Auto":
             self.button1.set_text("Off")
             self.bttn1 = "Off"
+            self.frame2
             print "Zone1 Off"
         elif self.bttn1 == "Off":
             self.button1.set_text("On")
