@@ -28,7 +28,7 @@ lcd.begin(20, 1)
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
 
-#temp_sensor = '/sys/bus/w1/devices/28-0000060e26f0/w1_slave'
+temp_sensor = '/sys/bus/w1/devices/28-0000060e26f0/w1_slave'
 
 #Counter
 counter = 0
