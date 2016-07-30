@@ -144,35 +144,35 @@ frame8.grid(row=5, column=0, columnspan=2, rowspan=1, sticky=W)  #Divider4
 #Text
 #Zone1 On
 T1 = Text(window3, width=10, height=1)
-T1.insert("1.0", "0630\n") #Default value
+T1.insert("1.0", "1830\n") #Default value
 T1.grid(row=1, column=1, sticky=W)
 #Zone1 Off
 T2 = Text(window3, width=10, height=1)
-T2.insert("1.0", "0700\n") #Default value
+T2.insert("1.0", "1832\n") #Default value
 T2.grid(row=2, column=1, sticky=W)
 #Zone2 On
 T3 = Text(window3, width=10, height=1)
-T3.insert("1.0", "1700\n") #Default value
+T3.insert("1.0", "1900\n") #Default value
 T3.grid(row=3, column=1, sticky=W)
 #Zone2 Off
 T4 = Text(window3, width=10, height=1)
-T4.insert("1.0", "1730\n") #Default value
+T4.insert("1.0", "1907\n") #Default value
 T4.grid(row=4, column=1, sticky=W)
 #G/H Fan On
 T5 = Text(window3, width=10, height=1)
-T5.insert("1.0", "25.0\n") #Default value         
+T5.insert("1.0", "30.0\n") #Default value         
 T5.grid(row=5, column=1, sticky=W)
 #G/H Fan Off
 T6 = Text(window3, width=10, height=1)
-T6.insert("1.0", "18.0\n") #Default value
+T6.insert("1.0", "25.0\n") #Default value
 T6.grid(row=6, column=1, sticky=W)
 #Case Fan On
 T7 = Text(window3, width=10, height=1)
-T7.insert("1.0", "25.0\n") #Default value
+T7.insert("1.0", "22.0\n") #Default value
 T7.grid(row=7, column=1, sticky=W)
 #Case Fan Off
 T8 = Text(window3, width=10, height=1)
-T8.insert("1.0", "18.0\n") #Default value
+T8.insert("1.0", "16.0\n") #Default value
 T8.grid(row=8, column=1, sticky=W)
 #Output Display
 T9 = Text(window3, width=35, height=10)
@@ -192,17 +192,17 @@ T8_get_data = T8.get("1.0",END)
 #Zone 1
 def b1_on_off_auto():
     if B1["text"] == "Auto":
-        B1["text"] = "On"
-        relay_ch1_on()
-        frame2["bg"] = "red"
-        T9.insert("1.0", "Zone1 On\n")
-        print "Zone1 On"                
-    elif B1["text"] == "On":
-         B1["text"] = "Off"
-         relay_ch1_off()
-         frame2["bg"] = "black"
-         T9.insert("1.0", "Zone1 Off\n")
-         print "Zone1 Off"         
+        B1["text"] = "Off"
+        relay_ch1_off()
+        frame2["bg"] = "black"
+        T9.insert("1.0", "Zone1 Off\n")
+        print "Zone1 Off"                
+    elif B1["text"] == "Off":
+         B1["text"] = "On"
+         relay_ch1_on()
+         frame2["bg"] = "red"
+         T9.insert("1.0", "Zone1 On\n")
+         print "Zone1 On"         
     else:
          B1["text"] = "Auto"
          Zone1Timer()
@@ -215,17 +215,17 @@ B1.grid(row=2, column=1, sticky=W)
 #Zone 2
 def b2_on_off_auto():
     if B2["text"] == "Auto":
-        B2["text"] = "On"
-        relay_ch2_on()
-        frame3["bg"] = "red"
-        T9.insert("1.0", "Zone2 On\n")
-        print "Zone2 On"                
-    elif B2["text"] == "On":
-         B2["text"] = "Off"
-         relay_ch2_off()
-         frame3["bg"] = "black"
-         T9.insert("1.0", "Zone2 Off\n")
-         print "Zone2 Off"         
+        B2["text"] = "Off"
+        relay_ch2_off()
+        frame3["bg"] = "black"
+        T9.insert("1.0", "Zone2 Off\n")
+        print "Zone2 Off"                
+    elif B2["text"] == "Off":
+         B2["text"] = "On"
+         relay_ch2_on()
+         frame3["bg"] = "red"
+         T9.insert("1.0", "Zone2 On\n")
+         print "Zone2 On"         
     else:
          B2["text"] = "Auto"
          Zone2Timer()
@@ -238,17 +238,17 @@ B2.grid(row=4, column=1, sticky=W)
 #G/H Fan
 def b3_on_off_auto():
     if B3["text"] == "Auto":
-        B3["text"] = "On"
-        relay_ch4_on()
-        frame5["bg"] = "red"
-        T9.insert("1.0", "G/H Fan On\n")
-        print "G/H Fan On"                
-    elif B3["text"] == "On":
-         B3["text"] = "Off"
-         relay_ch4_off()
-         frame5["bg"] = "black"
-         T9.insert("1.0", "G/H Fan Off\n")
-         print "G/H Fan Off"                                  
+        B3["text"] = "Off"
+        relay_ch4_off()
+        frame5["bg"] = "black"
+        T9.insert("1.0", "G/H Fan Off\n")
+        print "G/H Fan Off"                
+    elif B3["text"] == "Off":
+         B3["text"] = "On"
+         relay_ch4_on()
+         frame5["bg"] = "red"
+         T9.insert("1.0", "G/H Fan On\n")
+         print "G/H Fan On"                                  
     else:
          B3["text"] = "Auto"
          GH_FanAuto()
@@ -261,17 +261,17 @@ B3.grid(row=8, column=1, sticky=W)
 #Case Fan
 def b4_on_off_auto():
     if B4["text"] == "Auto":
-        B4["text"] = "On"
-        relay_ch3_on()
-        frame6["bg"] = "red"
-        T9.insert("1.0", "Case Fan On\n")
-        print "Case Fan On"                
-    elif B4["text"] == "On":
-         B4["text"] = "Off"
-         relay_ch3_off()
-         frame6["bg"] = "black"
-         T9.insert("1.0", "Case Fan Off\n")
-         print "Case Fan Off"                                  
+        B4["text"] = "Off"
+        relay_ch3_off()
+        frame6["bg"] = "black"
+        T9.insert("1.0", "Case Fan Off\n")
+        print "Case Fan Off"                
+    elif B4["text"] == "Off":
+         B4["text"] = "On"
+         relay_ch3_on()
+         frame6["bg"] = "red"
+         T9.insert("1.0", "Case Fan On\n")
+         print "Case Fan On"                                  
     else:
          B4["text"] = "Auto"
          CaseFanAuto()
@@ -434,7 +434,7 @@ def GH_FanAuto():
        gh_fan_temp = ('%1.0f' % temperature)
        print gh_fan_temp
     else:
-       #print 'GUI Failed to get reading. Try again!'
+       print 'GUI Failed to get reading. Try again!'
        
     e_time = T5_get_data
     gh_fan_temp_max = e_time.rstrip('\n')
@@ -594,7 +594,7 @@ def updates():
     lcd.clear()
     lcd.message(datetime.now().time().strftime('%H:%M:%S'))
     if humidity is not None and temperature is not None:
-       lcd.message ('  T=%0.1fC\n' % temperature)
+       lcd.message ('  T=%0.1fC\2' % temperature)
        lcd.message ('H=%0.1f%%' % humidity)
     else:
        print 'LCD Failed to get reading. Try again!'
