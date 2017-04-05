@@ -101,17 +101,24 @@ B4.grid(row=6, column=1, sticky=NW)
 
 #--Window2 Layout--#
 #Window2 Frames
-W2F1 = Frame(window2, borderwidth=5, relief="ridge", width=640, height=415) # Window2/Frame1
-W2F1.grid(row=1, column=0, sticky=NW) # Window2/Frame1 grid
-W2F1.grid_propagate(False) # Prevent Window2/Frame1 from resizing
+W2F1 = Frame(window2, borderwidth=5, relief="ridge", width=640, height=415) # Camera Frame
+W2F1.grid(row=1, column=0, sticky=NW) # Camera Frame grid
+W2F1.grid_propagate(False) # Prevent Camera Frame from resizing
 W2F2 = Frame(window2, borderwidth=5, relief="ridge", width=150, height=415) # Window2/Frame2
 W2F2.grid(row=1, column=1, sticky=NW) # Window2/Frame2 grid
 W2F2.grid_propagate(False) # Prevent Window2/Frame2 from resizing
+W2F3 = Frame(W2F2, borderwidth=3, relief="ridge", width=65, height=25) # Capture LED
+W2F3.grid(row=1, column=2, columnspan=1, rowspan=1, sticky=W)
+W2F3.config(bg = "green")
+W2F4 = Frame(W2F2, borderwidth=3, bg="green", relief="ridge", width=65, height=25) # Record LED
+W2F4.grid(row=2, column=2, columnspan=1, rowspan=1, sticky=W)
 
 #Window2 Buttons
 def Capture_Frame():
+    W2F3.config(bg = "red")
     print ("Capture")
-    
+    root.after(200, lambda: W2F3.config(bg = "green" ))
+        
 B4=Button(W2F2, text="Capture", command= Capture_Frame, width=8, height=2)
 B4.grid(row=1, column=1, sticky=NW)
 
