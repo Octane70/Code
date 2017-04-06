@@ -84,10 +84,10 @@ def Door_Lock_Release(event):
     W1F1.config(bg = "green")
     print ("Door Lock release")
     
-B1=Button(window1, text="Lock", width=8, height=2)
-B1.grid(row=3, column=0, sticky=NW)
-B1.bind("<ButtonPress>", Door_Lock_Press)
-B1.bind("<ButtonRelease>", Door_Lock_Release)
+W1B1=Button(window1, text="Lock", width=8, height=2)
+W1B1.grid(row=3, column=0, sticky=NW)
+W1B1.bind("<ButtonPress>", Door_Lock_Press)
+W1B1.bind("<ButtonRelease>", Door_Lock_Release)
 
 def Door_Unlock_Press(event):
     W1F2.config(bg = "red")
@@ -97,10 +97,10 @@ def Door_Unlock_Release(event):
     W1F2.config(bg = "green")
     print ("Door Unlock release")    
     
-B2=Button(window1, text="UnLock", width=8, height=2)
-B2.grid(row=3, column=1, sticky=NW)
-B2.bind("<ButtonPress>", Door_Unlock_Press)
-B2.bind("<ButtonRelease>", Door_Unlock_Release)
+W1B2=Button(window1, text="UnLock", width=8, height=2)
+W1B2.grid(row=3, column=1, sticky=NW)
+W1B2.bind("<ButtonPress>", Door_Unlock_Press)
+W1B2.bind("<ButtonRelease>", Door_Unlock_Release)
 
 #Auto Start/Stop
 def Car_Start_Press(event):
@@ -111,10 +111,10 @@ def Car_Start_Release(event):
     W1F3.config(bg = "green")
     print ("Car Start release")    
     
-B3=Button(window1, text="Start", width=8, height=2)
-B3.grid(row=6, column=0, sticky=NW)
-B3.bind("<ButtonPress>", Car_Start_Press)
-B3.bind("<ButtonRelease>", Car_Start_Release)
+W1B3=Button(window1, text="Start", width=8, height=2)
+W1B3.grid(row=6, column=0, sticky=NW)
+W1B3.bind("<ButtonPress>", Car_Start_Press)
+W1B3.bind("<ButtonRelease>", Car_Start_Release)
 
 def Car_Stop_Press(event):
     W1F4.config(bg = "red")
@@ -124,10 +124,10 @@ def Car_Stop_Release(event):
     W1F4.config(bg = "green")
     print ("Car Stop release")    
     
-B4=Button(window1, text="Stop", width=8, height=2)
-B4.grid(row=6, column=1, sticky=NW)
-B4.bind("<ButtonPress>", Car_Stop_Press)
-B4.bind("<ButtonRelease>", Car_Stop_Release)
+W1B4=Button(window1, text="Stop", width=8, height=2)
+W1B4.grid(row=6, column=1, sticky=NW)
+W1B4.bind("<ButtonPress>", Car_Stop_Press)
+W1B4.bind("<ButtonRelease>", Car_Stop_Release)
 
 #--Window2 Layout--#
 #Window2 Frames
@@ -170,34 +170,34 @@ def Record_Start():
     W2F4["bg"] = "red"
     print ("Record")
     
-B4=Button(W2F2, text="Record", command= Record_Start, width=9, height=2)
-B4.grid(row=4, column=1, sticky=NW)
+W2B2=Button(W2F2, text="Record", command= Record_Start, width=9, height=2)
+W2B2.grid(row=4, column=1, sticky=NW)
 
 def Record_Stop():
     W2F4["bg"] = "green"
     print ("Stop Record")
     
-B4=Button(W2F2, text="Stop", command= Record_Stop, width=8, height=2)
-B4.grid(row=4, column=2, sticky=NW)
+W2B3=Button(W2F2, text="Stop", command= Record_Stop, width=8, height=2)
+W2B3.grid(row=4, column=2, sticky=NW)
 
 #Forward/Rewind
 def Skip_Back():
     print ("Skip Back")
     
-B4=Button(W2F2, text="Skip.R", command= Skip_Back, width=9, height=2)
-B4.grid(row=6, column=1, sticky=NW)
+W2B4=Button(W2F2, text="Skip.R", command= Skip_Back, width=9, height=2)
+W2B4.grid(row=6, column=1, sticky=NW)
 
 def Skip_Forward():
     print ("Skip Forward")
     
-B4=Button(W2F2, text="Skip.F", command= Skip_Forward, width=8, height=2)
-B4.grid(row=6, column=2, sticky=NW)
+W2B5=Button(W2F2, text="Skip.F", command= Skip_Forward, width=8, height=2)
+W2B5.grid(row=6, column=2, sticky=NW)
 
 def Open_Folder():
     print ("Open Folder")
     
-B4=Button(W2F2, text="Open Folder", command= Open_Folder, width=19, height=1)
-B4.grid(row=8, column=1, columnspan=150, sticky=NW)
+W2B6=Button(W2F2, text="Open Folder", command= Open_Folder, width=19, height=1)
+W2B6.grid(row=8, column=1, columnspan=150, sticky=NW)
 
 root.mainloop() 
 #gpio.cleanup()	
