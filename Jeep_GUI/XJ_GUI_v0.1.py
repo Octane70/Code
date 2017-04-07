@@ -1,4 +1,30 @@
 from tkinter import *
+import RPi.GPIO as gpio
+import sys
+import os
+import subprocess
+
+#Initiate gpio's for relay
+gpio.setmode(gpio.BCM)
+gpio.setup(17, gpio.OUT) # relay 1
+gpio.setup(27, gpio.OUT) # relay 2
+gpio.setwarnings(False)
+
+#set relay gpio's to false
+gpio.output(17, False) # relay 1
+gpio.output(27, False) # relay 2
+
+#relay ch1 on and off
+def relay_ch1_on():
+    gpio.output(17, True) #Relay ch1 on
+def relay_ch1_off(): 
+    gpio.output(17, False) #Relay ch1 off
+
+#relay ch2 on and off
+def relay_ch2_on():
+    gpio.output(27, True) #Relay ch2 on
+def relay_ch2_off(): 
+    gpio.output(27, False) #Relay ch2 off
 
 root = Tk()
 root.geometry("800x480+0+0")
@@ -17,11 +43,6 @@ window1.grid_propagate(False) # Prevent window1 from resizing
 window2.grid_propagate(False) # Prevent window2 from resizing
 window3.grid_propagate(False) # Prevent window3 from resizing
 window4.grid_propagate(False) # Prevent window4 from resizing
-
-
-#L2 = Label(window2, text="Camera").grid(row=1, column=0, sticky=W)
-L3 = Label(window3, text="Jeep Diagnostics").grid(row=1, column=0, sticky=W)
-L4 = Label(window4, text="RPI Zero").grid(row=1, column=0, sticky=W)
 
 def Window_1():
     window2.grid_remove()
@@ -77,10 +98,12 @@ W1F4.grid(row=5, column=1, columnspan=1, rowspan=1, sticky=W) # vehicle stop gri
 #Window1 Buttons
 #Door Lock/Unlock
 def Door_Lock_Press(event):
+    relay_ch1_on()
     W1F1.config(bg = "red")
     print ("Door Lock press")
     
 def Door_Lock_Release(event):
+    relay_ch1_off()
     W1F1.config(bg = "green")
     print ("Door Lock release")
     
@@ -90,10 +113,12 @@ W1B1.bind("<ButtonPress>", Door_Lock_Press)
 W1B1.bind("<ButtonRelease>", Door_Lock_Release)
 
 def Door_Unlock_Press(event):
+    relay_ch2_on()
     W1F2.config(bg = "red")
     print ("Door Unlock press")
 
 def Door_Unlock_Release(event):
+    relay_ch2_off()
     W1F2.config(bg = "green")
     print ("Door Unlock release")    
     
@@ -139,15 +164,15 @@ W2F2.grid(row=1, column=1, sticky=NW) # Button frame grid
 W2F2.grid_propagate(False) # Prevent button frame from resizing
 W2F3 = Frame(W2F2, borderwidth=3, bg="green", relief="ridge", width=69, height=41) # Capture frame
 W2F3.grid(row=1, column=2, columnspan=1, rowspan=1, sticky=NW) # Capture frame grid
-W2F4 = Frame(W2F2, borderwidth=3, bg="green", relief="ridge", width=142, height=25) # Record frame
-W2F4.grid(row=3, column=1, columnspan=160, rowspan=1, sticky=NW) # Record frame grid
+W2F4 = Frame(W2F2, borderwidth=3, bg="green", relief="ridge", width=138, height=25) # Record frame
+W2F4.grid(row=3, column=1, columnspan=150, rowspan=1, sticky=NW) # Record frame grid
 
 #Divider Frames
-W2F5 = Frame(W2F2, borderwidth=5, bg="grey", relief="ridge", width=142, height=4) #Divider1
+W2F5 = Frame(W2F2, borderwidth=5, bg="grey", relief="ridge", width=141, height=4) #Divider1
 W2F5.grid(row=2, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider1 grid
-W2F6 = Frame(W2F2, borderwidth=5, bg="grey", relief="ridge", width=142, height=4) #Divider2
+W2F6 = Frame(W2F2, borderwidth=5, bg="grey", relief="ridge", width=141, height=4) #Divider2
 W2F6.grid(row=5, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider2 grid
-W2F7 = Frame(W2F2, borderwidth=5, bg="grey", relief="ridge", width=142, height=4) #Divider3
+W2F7 = Frame(W2F2, borderwidth=5, bg="grey", relief="ridge", width=141, height=4) #Divider3
 W2F7.grid(row=7, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider3 grid
 
 #Window2 Buttons
@@ -160,7 +185,7 @@ def Capture_Frame_Release(event):
     W2F3.config(bg = "green")
     print ("Capture Release")   
         
-W2B1=Button(W2F2, text="Capture", width=9, height=2)
+W2B1=Button(W2F2, text="Capture", width=5, height=2)
 W2B1.grid(row=1, column=1, sticky=NW)
 W2B1.bind("<ButtonPress>", Capture_Frame_Press)
 W2B1.bind("<ButtonRelease>", Capture_Frame_Release)
@@ -170,34 +195,69 @@ def Record_Start():
     W2F4["bg"] = "red"
     print ("Record")
     
-W2B2=Button(W2F2, text="Record", command= Record_Start, width=9, height=2)
+W2B2=Button(W2F2, text="Record", command= Record_Start, width=5, height=2)
 W2B2.grid(row=4, column=1, sticky=NW)
 
 def Record_Stop():
     W2F4["bg"] = "green"
     print ("Stop Record")
     
-W2B3=Button(W2F2, text="Stop", command= Record_Stop, width=8, height=2)
+W2B3=Button(W2F2, text="Stop", command= Record_Stop, width=5, height=2)
 W2B3.grid(row=4, column=2, sticky=NW)
 
 #Forward/Rewind
 def Skip_Back():
     print ("Skip Back")
     
-W2B4=Button(W2F2, text="Skip.R", command= Skip_Back, width=9, height=2)
+W2B4=Button(W2F2, text="Skip.R", command= Skip_Back, width=5, height=2)
 W2B4.grid(row=6, column=1, sticky=NW)
 
 def Skip_Forward():
     print ("Skip Forward")
     
-W2B5=Button(W2F2, text="Skip.F", command= Skip_Forward, width=8, height=2)
+W2B5=Button(W2F2, text="Skip.F", command= Skip_Forward, width=5, height=2)
 W2B5.grid(row=6, column=2, sticky=NW)
 
 def Open_Folder():
     print ("Open Folder")
     
-W2B6=Button(W2F2, text="Open Folder", command= Open_Folder, width=19, height=1)
+W2B6=Button(W2F2, text="Open Folder", command= Open_Folder, width=14, height=1)
 W2B6.grid(row=8, column=1, columnspan=150, sticky=NW)
 
+#--Window3 Layout--#
+#Window3 Labels
+W3L1 = Label(window3, text="Jeep Diagnostics").grid(row=1, column=0, sticky=W)
+
+#--Window3 Layout--#
+#Window3 Labels
+W4L1 = Label(window4, text="CPU Temp:").grid(row=1, column=0, sticky=W)
+W4L3 = Label(window4, text="IP Address:").grid(row=2, column=0, sticky=W)
+
+cputemp = StringVar()
+
+def zero_widgets():
+    W4L2 = Label(window4, textvariable=cputemp).grid(row=1,column=1,sticky=W)
+
+# RPI CPU Temperature
+def getTempCPU():
+    temp = subprocess.getoutput("/opt/vc/bin/vcgencmd measure_temp")
+    initTempPos = str(temp).find("=")
+    finishTempPos = str(temp).find("'")
+    temp = str(temp)[initTempPos+1:finishTempPos]
+    try:
+        temp_num = float(temp)
+        return temp_num
+    except:
+        print ("Unable to transform to float")
+
+def Zero_Updates():
+    global getTempCPU
+    CPUTemp = getTempCPU()
+    cputemp.set  ('%0.1fC' % CPUTemp)
+    root.after(1000, Zero_Updates)
+    
+
+zero_widgets()
+root.after(1000, Zero_Updates)
 root.mainloop() 
-#gpio.cleanup()	
+gpio.cleanup()	
