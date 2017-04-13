@@ -3,6 +3,17 @@ import RPi.GPIO as gpio
 import sys
 import os
 import subprocess
+import socket
+from picamera import PiCamera
+
+#camera = PiCamera()
+#camera.preview_fullscreen = False
+#camera.resolution = (1920, 1080)
+#camera.preview_window = (10, -6, 633, 633)
+
+#camera.start_preview()
+#sleep(10)
+#camera.stop_preview()
 
 #Initiate gpio's for relay
 gpio.setmode(gpio.BCM)
@@ -63,6 +74,7 @@ B1=Button(root, text="Camera", command= Window_2, width=15, height=3)
 B1.grid(row=0, column=1, sticky=NW)
 
 def Window_3():
+    #camera.start_preview()
     window1.grid_remove()
     window2.grid_remove()
     window4.grid_remove()
@@ -156,7 +168,7 @@ W1B4.bind("<ButtonRelease>", Car_Stop_Release)
 
 #--Window2 Layout--#
 #Window2 Frames
-W2F1 = Frame(window2, borderwidth=5, relief="ridge", width=640, height=415) # Camera frame
+W2F1 = Frame(window2, borderwidth=5, relief="ridge", width=640, height=364) # Camera frame
 W2F1.grid(row=1, column=0, sticky=NW) # Camera frame grid
 W2F1.grid_propagate(False) # Prevent camera frame from resizing
 W2F2 = Frame(window2, borderwidth=5, relief="ridge", width=150, height=415) # Button frame
@@ -228,16 +240,27 @@ W2B6.grid(row=8, column=1, columnspan=150, sticky=NW)
 #Window3 Labels
 W3L1 = Label(window3, text="Jeep Diagnostics").grid(row=1, column=0, sticky=W)
 
-#--Window3 Layout--#
-#Window3 Labels
-W4L1 = Label(window4, text="CPU Temp:").grid(row=1, column=0, sticky=W)
-W4L3 = Label(window4, text="IP Address:").grid(row=2, column=0, sticky=W)
+#--Window4 Layout--#
+
+#Window4 Labels
+W4_font = ('helvetica', 12, 'bold')
+W4L1 = Label(window4, text="CPU Temp:", font=W4_font).grid(row=1, column=0, sticky=W)
+W4L2 = Label(window4, text="HostName:", font=W4_font).grid(row=2, column=0, sticky=W)
+W4L2 = Label(window4, text="IP Address:", font=W4_font).grid(row=3, column=0, sticky=W)
 
 cputemp = StringVar()
 
-def zero_widgets():
-    W4L2 = Label(window4, textvariable=cputemp).grid(row=1,column=1,sticky=W)
+#Zero hostname & IPAddres
+host = socket.gethostname()
+ipnum = subprocess.check_output(["hostname", "-I"])
 
+def zero_widgets():
+    global host
+    global ipnum
+    W4L3 = Label(window4, textvariable=cputemp, font=W4_font).grid(row=1,column=1,sticky=W)
+    W4L3 = Label(window4, text=host, font=W4_font).grid(row=2,column=1,sticky=W)
+    W4L3 = Label(window4, text=ipnum, font=W4_font).grid(row=3,column=1,rowspan=8,sticky=W)
+    
 # RPI CPU Temperature
 def getTempCPU():
     temp = subprocess.getoutput("/opt/vc/bin/vcgencmd measure_temp")
