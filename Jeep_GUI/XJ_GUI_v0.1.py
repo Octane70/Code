@@ -6,15 +6,6 @@ import subprocess
 import socket
 from picamera import PiCamera
 
-#camera = PiCamera()
-#camera.preview_fullscreen = False
-#camera.resolution = (1920, 1080)
-#camera.preview_window = (10, -6, 633, 633)
-
-#camera.start_preview()
-#sleep(10)
-#camera.stop_preview()
-
 #Initiate gpio's for relay
 gpio.setmode(gpio.BCM)
 gpio.setup(17, gpio.OUT) # relay 1
@@ -36,7 +27,14 @@ def relay_ch2_on():
     gpio.output(27, True) #Relay ch2 on
 def relay_ch2_off(): 
     gpio.output(27, False) #Relay ch2 off
+    
+#PiCamera Overlay
+camera = PiCamera()
+camera.preview_fullscreen = False
+camera.resolution = (1920, 1080)
+camera.preview_window = (10, -6, 633, 633)
 
+#---Root Window---#
 root = Tk()
 root.geometry("800x480+0+0")
 root.minsize(800,480)
@@ -56,6 +54,7 @@ window3.grid_propagate(False) # Prevent window3 from resizing
 window4.grid_propagate(False) # Prevent window4 from resizing
 
 def Window_1():
+    camera.stop_preview() 
     window2.grid_remove()
     window3.grid_remove()
     window4.grid_remove()
@@ -65,6 +64,7 @@ B1=Button(root, text=" Jeep Controls", command= Window_1, width=15, height=3)
 B1.grid(row=0, column=0, sticky=NW)
 
 def Window_2():
+    camera.start_preview()
     window1.grid_remove()
     window3.grid_remove()
     window4.grid_remove()
@@ -74,7 +74,7 @@ B1=Button(root, text="Camera", command= Window_2, width=15, height=3)
 B1.grid(row=0, column=1, sticky=NW)
 
 def Window_3():
-    #camera.start_preview()
+    camera.stop_preview() 
     window1.grid_remove()
     window2.grid_remove()
     window4.grid_remove()
@@ -84,6 +84,7 @@ B1=Button(root, text="Jeep Diagnostics", command= Window_3, width=15, height=3)
 B1.grid(row=0, column=3, sticky=NW)
 
 def Window_4():
+    camera.stop_preview() 
     window1.grid_remove()
     window2.grid_remove()
     window3.grid_remove()
@@ -186,7 +187,7 @@ W2F6 = Frame(W2F2, borderwidth=5, bg="grey", relief="ridge", width=141, height=4
 W2F6.grid(row=5, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider2 grid
 W2F7 = Frame(W2F2, borderwidth=5, bg="grey", relief="ridge", width=141, height=4) #Divider3
 W2F7.grid(row=7, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider3 grid
-
+   
 #Window2 Buttons
 #Take a Picture
 def Capture_Frame_Press(event):
@@ -241,7 +242,6 @@ W2B6.grid(row=8, column=1, columnspan=150, sticky=NW)
 W3L1 = Label(window3, text="Jeep Diagnostics").grid(row=1, column=0, sticky=W)
 
 #--Window4 Layout--#
-
 #Window4 Labels
 W4_font = ('helvetica', 12, 'bold')
 W4L1 = Label(window4, text="CPU Temp:", font=W4_font).grid(row=1, column=0, sticky=W)
