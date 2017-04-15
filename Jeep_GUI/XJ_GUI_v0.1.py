@@ -5,6 +5,7 @@ import os
 import subprocess
 import socket
 from picamera import PiCamera
+from time import sleep
 
 #Initiate gpio's for relay
 gpio.setmode(gpio.BCM)
@@ -193,6 +194,11 @@ W2F7.grid(row=7, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider3 grid
 def Capture_Frame_Press(event):
     W2F3.config(bg = "red")
     print ("Capture Press")
+    camera.resolution = (1920, 1080)
+    camera.framerate = 15
+    sleep(2)
+    camera.capture('/home/pi/Desktop/max.jpg')
+
 
 def Capture_Frame_Release(event):
     W2F3.config(bg = "green")
@@ -205,6 +211,7 @@ W2B1.bind("<ButtonRelease>", Capture_Frame_Release)
 
 #Record Start/Stop
 def Record_Start():
+    camera.start_recording('/home/pi/video.h264')
     W2F4["bg"] = "red"
     print ("Record")
     
@@ -212,6 +219,7 @@ W2B2=Button(W2F2, text="Record", command= Record_Start, width=5, height=2)
 W2B2.grid(row=4, column=1, sticky=NW)
 
 def Record_Stop():
+    camera.stop_recording()
     W2F4["bg"] = "green"
     print ("Stop Record")
     
@@ -282,5 +290,6 @@ def Zero_Updates():
 
 zero_widgets()
 root.after(1000, Zero_Updates)
-root.mainloop() 
+root.mainloop()
+camera.stop_preview()
 gpio.cleanup()	
