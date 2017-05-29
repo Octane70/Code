@@ -49,11 +49,11 @@ root.title('Jeep XJ GUI v0.2')
 root_font = (5)
 
 #---Window Tabs---#
-window1 = Frame(root, borderwidth=5, relief="ridge", width=800, height=395)# Jeep Controls
+window1 = Frame(root, borderwidth=5, relief="ridge", width=800, height=380)# Jeep Controls
 window1.grid(row=1, column=0, columnspan=800, rowspan=1, sticky=NW) # Jeep Controls (default window)
-window2 = Frame(root, borderwidth=5, relief="ridge", width=800, height=395) # Camera
-window3 = Frame(root, borderwidth=5, relief="ridge", width=800, height=395) # Jeep Diagnostics
-window4 = Frame(root, borderwidth=5, relief="ridge", width=800, height=395) # RPI Zero
+window2 = Frame(root, borderwidth=5, relief="ridge", width=800, height=380) # Camera
+window3 = Frame(root, borderwidth=5, relief="ridge", width=800, height=380) # Jeep Diagnostics
+window4 = Frame(root, borderwidth=5, relief="ridge", width=800, height=380) # RPI Zero
 
 window1.grid_propagate(False) # Prevent window1 from resizing
 window2.grid_propagate(False) # Prevent window2 from resizing
@@ -176,13 +176,11 @@ W1B4.bind("<ButtonRelease>", Car_Stop_Release)
 #---Camera---Window2 Layout---#
 #-----------------------------#
 
-
-
 #Window2 Frames
-imageFrame = Frame(window2, borderwidth=5, relief="ridge", width=640, height=365) # Camera frame
+imageFrame = Frame(window2, borderwidth=5, relief="ridge", width=642, height=370) # Camera frame
 imageFrame.grid(row=1, column=0, sticky=NW) # Camera frame grid
 imageFrame.grid_propagate(False) # Prevent camera frame from resizing
-W2F2 = Frame(window2, borderwidth=5, relief="ridge", width=152, height=390) # Button frame
+W2F2 = Frame(window2, borderwidth=5, relief="ridge", width=151, height=370) # Button frame
 W2F2.grid(row=1, column=1, sticky=NW) # Button frame grid
 W2F2.grid_propagate(False) # Prevent button frame from resizing
 W2F3 = Frame(W2F2, borderwidth=3, bg="green", relief="ridge", width=69, height=41) # Capture frame
@@ -198,14 +196,9 @@ W2F6.grid(row=5, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider2 grid
 W2F7 = Frame(W2F2, borderwidth=5, bg="grey", relief="ridge", width=141, height=4) #Divider3
 W2F7.grid(row=7, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider3 grid
 
-
-#Graphics window
-#imageFrame = Frame(window2, width=800, height=800)
-#imageFrame.grid(row=0, column=0, padx=10, pady=2)
-
 #Capture Video Frames
-lmain = Label(imageFrame)
-lmain.grid(row=0, column=0)
+lmain = Label(imageFrame, width=630, height=358)
+lmain.grid(row=0, column=0, sticky=NW)
 cap = cv2.VideoCapture(0)
 def show_frame():
     _, frame = cap.read()
