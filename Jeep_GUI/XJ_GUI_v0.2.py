@@ -9,6 +9,8 @@ import subprocess
 import commands
 import socket
 import cv2
+import obd
+import tkFileDialog
 #from omxplayer import OMXPlayer
 from time import sleep
 
@@ -43,6 +45,7 @@ root = Tk()
 root.geometry("800x450+0+0")
 root.minsize(800,450)
 root.maxsize(800,450)
+#root.overrideredirect(1)
 root.title('Jeep XJ GUI v0.2')
 
 #---Root Font---#
@@ -60,6 +63,10 @@ window2.grid_propagate(False) # Prevent window2 from resizing
 window3.grid_propagate(False) # Prevent window3 from resizing
 window4.grid_propagate(False) # Prevent window4 from resizing
 
+#Root Dividers
+RF1 = Frame(root, borderwidth=5, bg="grey", relief="ridge", width=7, height=70) #Divider1
+RF1.grid(row=0, column=5, sticky=NW)  #Divider1 grid
+
 def Window_1():
     window2.grid_remove()
     window3.grid_remove()
@@ -75,8 +82,8 @@ def Window_2():
     window4.grid_remove()
     window2.grid(row=1, column=0, columnspan=800, rowspan=1, sticky=NW) 
 
-B1=Button(root, text="Camera", font= root_font, command= Window_2, width=12, height=3)
-B1.grid(row=0, column=1, sticky=NW)
+B2=Button(root, text="Camera", font= root_font, command= Window_2, width=12, height=3)
+B2.grid(row=0, column=1, sticky=NW)
 
 def Window_3():
     window1.grid_remove()
@@ -84,8 +91,8 @@ def Window_3():
     window4.grid_remove()
     window3.grid(row=1, column=0, columnspan=800, rowspan=2, sticky=NW) 
         
-B1=Button(root, text="Jeep Diagnostics", font= root_font, command= Window_3, width=12, height=3)
-B1.grid(row=0, column=3, sticky=NW)
+B3=Button(root, text="Jeep Diagnostics", font= root_font, command= Window_3, width=12, height=3)
+B3.grid(row=0, column=3, sticky=NW)
 
 def Window_4():
     window1.grid_remove()
@@ -93,8 +100,22 @@ def Window_4():
     window3.grid_remove()
     window4.grid(row=1, column=0, columnspan=800, rowspan=2, sticky=NW) 
     
-B1=Button(root, text="RPI Zero", font= root_font, command= Window_4, width=12, height=3)
-B1.grid(row=0, column=4, sticky=NW)
+B4=Button(root, text="RPI Zero", font= root_font, command= Window_4, width=12, height=3)
+B4.grid(row=0, column=4, sticky=NW)
+
+def Minimize():
+    root.iconify()
+    print ("Minimize")
+    
+B5=Button(root, text="Minimize", font= root_font, command= Minimize, width=7, height=3)
+B5.grid(row=0, column=6, sticky=NW)
+
+def Close():
+    root.destroy()
+    print ("Close")
+    
+B5=Button(root, text="Close", font= root_font, command= Close, width=7, height=3)
+B5.grid(row=0, column=7, sticky=NW)
 
 #---Jeep Controls---Window1 Layout---#
 #------------------------------------#
@@ -177,16 +198,18 @@ W1B4.bind("<ButtonRelease>", Car_Stop_Release)
 #-----------------------------#
 
 #Window2 Frames
-imageFrame = Frame(window2, borderwidth=5, relief="ridge", width=642, height=370) # Camera frame
-imageFrame.grid(row=1, column=0, sticky=NW) # Camera frame grid
-imageFrame.grid_propagate(False) # Prevent camera frame from resizing
+CapFrame = Frame(window2, borderwidth=5, relief="ridge", width=642, height=370) # Camera capframe
+CapFrame.grid(row=1, column=0, sticky=NW) # Camera capframe grid
 W2F2 = Frame(window2, borderwidth=5, relief="ridge", width=151, height=370) # Button frame
 W2F2.grid(row=1, column=1, sticky=NW) # Button frame grid
-W2F2.grid_propagate(False) # Prevent button frame from resizing
 W2F3 = Frame(W2F2, borderwidth=3, bg="green", relief="ridge", width=69, height=41) # Capture frame
-W2F3.grid(row=1, column=2, columnspan=1, rowspan=1, sticky=NW) # Capture frame grid
-W2F4 = Frame(W2F2, borderwidth=3, bg="green", relief="ridge", width=138, height=25) # Record frame
-W2F4.grid(row=3, column=1, columnspan=150, rowspan=1, sticky=NW) # Record frame grid
+W2F3.grid(row=1, column=0, sticky=NW) # Capture frame grid
+W2F4 = Frame(W2F2, borderwidth=3, bg="green", relief="ridge", width=69, height=41) # Record frame
+W2F4.grid(row=3, column=0, sticky=NW) # Record frame grid
+
+#Prevent frames from resizing
+CapFrame.grid_propagate(False) # Prevent camera capframe from resizing
+W2F2.grid_propagate(False) # Prevent button frame from resizing
 
 #Divider Frames
 W2F5 = Frame(W2F2, borderwidth=5, bg="grey", relief="ridge", width=141, height=4) #Divider1
@@ -195,11 +218,17 @@ W2F6 = Frame(W2F2, borderwidth=5, bg="grey", relief="ridge", width=141, height=4
 W2F6.grid(row=5, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider2 grid
 W2F7 = Frame(W2F2, borderwidth=5, bg="grey", relief="ridge", width=141, height=4) #Divider3
 W2F7.grid(row=7, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider3 grid
+W2F8 = Frame(W2F2, borderwidth=5, bg="grey", relief="ridge", width=141, height=4) #Divider4
+W2F8.grid(row=9, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider4 grid
+
+#Window2 Labels
+W2L1 = Label(W2F2, text="Folders").grid(row=6, column=0, columnspan=2)
 
 #Capture Video Frames
-lmain = Label(imageFrame, width=630, height=358)
+lmain = Label(CapFrame, width=630, height=358)
 lmain.grid(row=0, column=0, sticky=NW)
 cap = cv2.VideoCapture(0)
+
 def show_frame():
     _, frame = cap.read()
     frame = cv2.flip(frame, 1)
@@ -208,18 +237,18 @@ def show_frame():
     imgtk = ImageTk.PhotoImage(image=img)
     lmain.imgtk = imgtk
     lmain.configure(image=imgtk)
-    lmain.after(10, show_frame) 
+    lmain.after(10, show_frame)
+
+img = cv2.imread('max.jpg',1)    
    
 #Window2 Buttons
 #Take a Picture
 def Capture_Frame_Press(event):
     W2F3.config(bg = "red")
     print ("Capture Press")
-    #camera.resolution = (1920, 1080)
-    #camera.framerate = 15
     if W2F3["bg"] == "red":
-       sleep(2)
-       camera.capture('/home/pi/Desktop/max.jpg')
+       _, saveimage= cap.read()
+       cv2.imwrite('max.jpg', saveimage)
 
 
 def Capture_Frame_Release(event):
@@ -233,60 +262,50 @@ W2B1.bind("<ButtonRelease>", Capture_Frame_Release)
 
 #Record Start/Stop
 def Record_Start():
-    camera.start_recording('/home/pi/video.h264')
+    #camera.start_recording('/home/pi/video.h264')
     W2F4["bg"] = "red"
     print ("Record")
     
 W2B2=Button(W2F2, text="Record", command= Record_Start, width=5, height=2)
-W2B2.grid(row=4, column=1, sticky=NW)
+W2B2.grid(row=3, column=1, sticky=NW)
 
 def Record_Stop():
-    camera.stop_recording()
+    #camera.stop_recording()
     W2F4["bg"] = "green"
     print ("Stop Record")
     
 W2B3=Button(W2F2, text="Stop", command= Record_Stop, width=5, height=2)
-W2B3.grid(row=4, column=2, sticky=NW)
+W2B3.grid(row=4, column=1, sticky=NW)
 
-#Forward/Rewind
-def Play_Video():
-    camera.stop_preview()
-    player.play()
-    #os.system("omxplayer -b /home/pi/video.h264")
-    print ("Play")
+#Folders
+def Picture_Folder():
+    tkFileDialog.askdirectory(initialdir='/home/pi/Pictures')
+    print ("Pic folder")
     
-W2B4=Button(W2F2, text="Play", command= Play_Video, width=5, height=2)
-W2B4.grid(row=6, column=1, sticky=NW)
+W2B4=Button(W2F2, text="Pictures", command= Picture_Folder, width=5, height=2)
+W2B4.grid(row=8, column=0, sticky=NW)
 
-def Stop_Video():
-    player.quit()
-    #camera.start_preview()
-    print ("Stop")
+def Video_Folder():
+    tkFileDialog.askdirectory(initialdir='/home/pi/Videos')
+    print ("Vid Folder")
     
-W2B5=Button(W2F2, text="Stop", command= Stop_Video, width=5, height=2)
-W2B5.grid(row=6, column=2, sticky=NW)
-
-def Show_Capture():
-    #camera.stop_preview()
-    W2L1.grid(row=1, column=1, sticky=NW)
-    print ("Show Capture")
-    
-W2B6=Button(W2F2, text="Show Capture", command= Show_Capture, width=14, height=1)
-W2B6.grid(row=8, column=1, columnspan=150, sticky=NW)
-
-def Close_Capture():
-    W2L1.grid_remove()
-    #camera.start_preview()
-    print ("Close Capture")
-    
-W2B7=Button(W2F2, text="Close Capture", command= Close_Capture, width=14, height=1)
-W2B7.grid(row=9, column=1, columnspan=150, sticky=NW)
+W2B5=Button(W2F2, text="Videos", command= Video_Folder, width=5, height=2)
+W2B5.grid(row=8, column=1, sticky=NW)
 
 #---Jeep Diagnostics---Window3 Layout---#
 #---------------------------------------#
 
 #Window3 Labels
-W3L1 = Label(window3, text="Jeep Diagnostics").grid(row=1, column=0, sticky=W)
+W3_font = ('helvetica', 12, 'bold')
+W3L1 = Label(window3, text="Perameters", font=W3_font).grid(row=1, column=0, sticky=W)
+W3L2 = Label(window3, text="RPM= 2000", font=W3_font).grid(row=3, column=0, sticky=W)
+W3L2 = Label(window3, text="Coolant Temp= 100", font=W3_font).grid(row=4, column=0, sticky=W)
+W3L4 = Label(window3, text="Intake Press= 20", font=W3_font).grid(row=5, column=0, sticky=W)
+W3L4 = Label(window3, text="Intake Temp= 40", font=W3_font).grid(row=6, column=0, sticky=W)
+
+#Window3 Dividers
+W3F1 = Frame(window3, borderwidth=5, bg="grey", relief="ridge", width=141, height=4) #Divider1
+W3F1.grid(row=2, column=0, columnspan=100, rowspan=1, sticky=W)  #Divider1 grid
 
 #---RPI Zero---Window4 Layout---#
 #-------------------------------#
