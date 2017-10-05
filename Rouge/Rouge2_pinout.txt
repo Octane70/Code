@@ -1,0 +1,42 @@
+# Gpio pinouts for rouge2
+pin1/3.3V- oled 3.3v power - orange
+pin2/5V - H-bridge 5v power - red
+pin3/BCM2 - sda to oled - grey
+pin4/Ground - 5v power to led/uss board - red
+pin5/BCM3 - scl to oled - white
+pin6/Ground - ground to oled - black
+pin7/BCM4 - na
+pin8/BCM14 - na
+pin9/Ground - ground to H-bridge - black
+pin10/BCM15 - na
+pin11/BCM17 - na
+pin12/BCM18 - right motor pwm
+pin13/BCM27 - right motor//2ina - yellow
+pin14/Ground - na
+pin15/BCM22 - right motor//2inb - green
+pin16/BCM23 - left motor//1ina - purple
+pin17/3.3V - red led - orange
+pin18/BCM24 - left motor//1inb - blue
+pin19/BCM10 - na
+pin20/Ground - na
+pin21/BCM9 - na
+pin22/BCM25 - sonic sensor1 trig - green 
+pin23/BCM11 - na
+pin24/BCM8 - na
+pin25/Ground - red led ground - black
+pin26/BCM7 - na
+pin27/BCM0 - na
+pin28/BCM1 - na
+pin29/BCM5 - sonic sensor1 ech0 - yellow
+pin30/Ground - ground to led/uss board - black
+pin31/BCM6 - RGB red - red
+pin32/BCM12 - left motor pwm
+pin33/BCM13 - na
+pin34/Ground - na
+pin35/BCM19 - na
+pin36/BCM16 - RGB green - green
+pin37/BCM26 - RGB blue - blue
+pin38/BCM20 - na
+pin39/Ground - na
+pin40/BCM21 - na 
+
