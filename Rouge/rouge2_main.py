@@ -1,5 +1,6 @@
 from bluedot import BlueDot
 import RPi.GPIO as GPIO
+import rouge2_sensor
 from signal import pause
 import time
 import Adafruit_SSD1306
@@ -10,6 +11,7 @@ import subprocess
 
 bd= BlueDot()
 
+#ultrasonic = DistanceSensor(ECHO=17, TRIG=4)
 #RGB LED
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -67,11 +69,16 @@ def auto_manual(channel):
           print ("Green 0n")
 
 bd.when_pressed = auto_manual
+
 try:
     while True:
-    
-         # Draw a black filled box to clear the image.
+
+        # Draw a black filled box to clear the image.
          draw.rectangle((0,0,width,height), outline=0, fill=0)
+         def sonic_sensor(): 
+             range = rouge2_sensor.Sensor()
+             return "Distance: %scm" % str(range)
+             print (range)
 
          draw.text((x, top),       "IP: " + str(IP),  font=font, fill=255)
          draw.text((x, top+16),    "Rouge2 is online", font=font, fill=255)
@@ -85,6 +92,10 @@ try:
               draw.text((x, top+25),     "Autonomous mode", font=font, fill=255)
          else:
              draw.text((x, top+25),     " ", font=font, fill=255)
+
+         #range = distance.Sensor()
+
+         draw.text((x, top+35),    sonic_sensor(), font=font, fill=255)
 
          # Display image.
          disp.image(image)
