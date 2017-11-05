@@ -1,6 +1,8 @@
-from bluedot import BlueDot
 import RPi.GPIO as GPIO
-from signal import pause
+import sys
+#sys.path.insert(0, "/home/pi/rouge/bluepad")
+#from bluepad.btcomm import BluetoothServer
+#from signal import pause
 import time
 import subprocess
 
@@ -27,46 +29,48 @@ GPIO.output(24, False)
 GPIO.output(27, False)
 GPIO.output(22, False)
 
-def dpad(pos):
-    if pos.top:
-        GPIO.output(23, True) #Left Motor // 1ina 
-        GPIO.output(24, False)  #Left Motor // 1inb
-        GPIO.output(27, False)  #Right Motor // 2ina  
-        GPIO.output(22, True) #Right Motor // 2inb
-        print("forward")
-    elif pos.bottom:
-        GPIO.output(23, False)  #Left Motor // 1ina  
-        GPIO.output(24, True) #Left Motor // 1inb
-        GPIO.output(27, True) #Right Motor // 2ina   
-        GPIO.output(22, False)  #Right Motor // 2inb
-        print("reverse")
-    elif pos.left:
-        GPIO.output(23, False)  #Left Motor // 1ina  
-        GPIO.output(24, True) #Left Motor // 1inb
-        GPIO.output(27, False)  #Right Motor // 2ina  
-        GPIO.output(22, True) #Right Motor // 2inb	
-        print("left")
-    elif pos.right:
-        GPIO.output(23, True) #Left Motor // 1ina 
-        GPIO.output(24, False)  #Left Motor // 1inb
-        GPIO.output(27, True) #Right Motor // 2ina   
-        GPIO.output(22, False)  #Right Motor // 2inb
-        print("right")
+print ("rouge2 manual")
+    
+#stop all motors
+def Stop():
+   #GPIO.output(12, False)
+   #GPIO.output(18, False)
+    GPIO.output(23, False)
+    GPIO.output(24, False)
+    GPIO.output(27, False)
+    GPIO.output(22, False)
+    print ("stop")
+    
+#dpad up commands
+def Forward():
+    GPIO.output(23, True) #Left Motor // 1ina 
+    GPIO.output(24, False)  #Left Motor // 1inb
+    GPIO.output(27, False)  #Right Motor // 2ina  
+    GPIO.output(22, True) #Right Motor // 2inb
+    print("forward")
+        
+#dpad down commands
+def Reverse():
+    GPIO.output(23, False)  #Left Motor // 1ina  
+    GPIO.output(24, True) #Left Motor // 1inb
+    GPIO.output(27, True) #Right Motor // 2ina   
+    GPIO.output(22, False)  #Right Motor // 2inb
+    print("reverse")
+        
+#dpad left commands
+def Left():
+    GPIO.output(23, False)  #Left Motor // 1ina  
+    GPIO.output(24, True) #Left Motor // 1inb
+    GPIO.output(27, False)  #Right Motor // 2ina  
+    GPIO.output(22, True) #Right Motor // 2inb	
+    print("left")
+        
+#dpad right commands
+def Right():
+    GPIO.output(23, True) #Left Motor // 1ina 
+    GPIO.output(24, False)  #Left Motor // 1inb
+    GPIO.output(27, True) #Right Motor // 2ina   
+    GPIO.output(22, False)  #Right Motor // 2inb
+    print("right")    
 
-def stop(pos):
-       #turn off the motors
-       #GPIO.output(12, False)
-       #GPIO.output(18, False)
-       GPIO.output(23, False)
-       GPIO.output(24, False)
-       GPIO.output(27, False)
-       GPIO.output(22, False)
-       
-bd = BlueDot()
-bd.when_pressed = dpad
-bd.when_moved = dpad
-bd.when_released = stop
 
-pause()
-
-GPIO.cleanup()
