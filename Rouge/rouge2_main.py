@@ -1,15 +1,17 @@
-from bluedot import BlueDot
+import sys
+sys.path.insert(0, "/home/pi/rouge/bluepad")
+from bluepad.btcomm import BluetoothServer
+from signal import pause
 import RPi.GPIO as GPIO
 import rouge2_sensor
-from signal import pause
+import rouge2_manual
+#import rouge2_auto
 import time
 import Adafruit_SSD1306
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 import subprocess
-
-bd= BlueDot()
 
 #ultrasonic = DistanceSensor(ECHO=17, TRIG=4)
 #RGB LED
@@ -54,21 +56,50 @@ font = ImageFont.load_default()
 cmd = "hostname -I | cut -d\' \' -f1"
 IP = subprocess.check_output(cmd, shell = True )
 #<------End Oled Configuration------>
+         
+def data_received(data):
+    command = data
 
-def auto_manual(channel):
-    if (GPIO.input(16) == False): #Green Led On
-        GPIO.output(16, True)
-        GPIO.output(26, False)
-        print ("Blue On")
-    elif (GPIO.input(26) == False): #Blue Led On
-          GPIO.output(26, True)
-          GPIO.output(16, False)
-          print ("Green On")
+    if command == "9":
+        GPIO.output(26, True)
+        GPIO.output(16, False)
+        #manual_mode
+        #auto_mode.exit() 
+        print ("Green On")
+    elif command == "11":
+         GPIO.output(16, True)
+         GPIO.output(26, False)
+         #autoMode
+         #manual_mode.terminate()
+         print ("Blue On")
+
+    #Dpad Forward
+    elif command == "1":
+         rouge2_manual.Forward()
+    elif command == "2":
+         rouge2_manual.Stop()
+
+        #Dpad Reverse
+    elif command == "3":
+         rouge2_manual.Reverse()
+    elif command == "4":
+         rouge2_manual.Stop()
+
+    #Dpad Left
+    elif command == "5":
+         rouge2_manual.Left()
+    elif command == "6":
+         rouge2_manual.Stop()
+
+    #Dpad Right
+    elif command == "7":
+         rouge2_manual.Right()
+    elif command == "8":
+         rouge2_manual.Stop()
     else:
-          GPIO.output(16, False)
-          print ("Green 0n")
+         None
 
-bd.when_pressed = auto_manual
+BluetoothServer(data_received)
 
 try:
     while True:
@@ -106,5 +137,8 @@ except KeyboardInterrupt:
        GPIO.output(16, True)
        GPIO.output(26, True)
        GPIO.cleanup()
+      # manual_mode.terminate()
+      # auto_mode.terminate()
        disp.clear()
        disp.display()
+      
