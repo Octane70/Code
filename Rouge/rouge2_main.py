@@ -137,8 +137,6 @@ except KeyboardInterrupt:
        GPIO.output(16, True)
        GPIO.output(26, True)
        GPIO.cleanup()
-      # manual_mode.terminate()
-      # auto_mode.terminate()
        disp.clear()
        disp.display()
       
