@@ -56,10 +56,12 @@ font = ImageFont.load_default()
 cmd = "hostname -I | cut -d\' \' -f1"
 IP = subprocess.check_output(cmd, shell = True )
 #<------End Oled Configuration------>
-         
+        
 def data_received(data):
-    command = data
+    auto_manual(data)
+    manual_mode(data) 
 
+def auto_manual(command):
     if command == "9":
         GPIO.output(26, True)
         GPIO.output(16, False)
@@ -73,8 +75,9 @@ def data_received(data):
          #manual_mode.terminate()
          print ("Blue On")
 
+def manual_mode(command):
     #Dpad Forward
-    elif command == "1":
+    if command == "1":
          rouge2_manual.Forward()
     elif command == "2":
          rouge2_manual.Stop()
@@ -96,8 +99,6 @@ def data_received(data):
          rouge2_manual.Right()
     elif command == "8":
          rouge2_manual.Stop()
-    else:
-         None
 
 BluetoothServer(data_received)
 
