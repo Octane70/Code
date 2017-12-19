@@ -10,7 +10,7 @@ ECHO = 5
 #TRIG = 5
 #ECHO = 6
 
-print ("Distance Measurement In Progress")
+#print ("Distance Measurement In Progress")
 
 GPIO.setup(TRIG,GPIO.OUT)
 GPIO.setup(ECHO,GPIO.IN)
@@ -20,7 +20,7 @@ def Sensor():
     while True:
 
           GPIO.output(TRIG, False)
-          print ("Waiting For Sensor To Settle")
+         # print ("Waiting For Sensor To Settle")
           time.sleep(2)
 
           GPIO.output(TRIG, True)
@@ -40,8 +40,8 @@ def Sensor():
 
           distance = round(distance, 2)
 
-          print ("Distance:",distance,"cm")
+          #print ("Distance:",distance,"cm")
           return distance     
-          time.sleep(100) 
+         # time.sleep(100) 
 
 

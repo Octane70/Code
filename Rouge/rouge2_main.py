@@ -1,17 +1,18 @@
 import sys
+import os
 sys.path.insert(0, "/home/pi/rouge/bluepad")
 from bluepad.btcomm import BluetoothServer
 from signal import pause
 import RPi.GPIO as GPIO
 import rouge2_sensor
-import rouge2_manual
-#import rouge2_auto
+import rouge2_motors
 import time
 import Adafruit_SSD1306
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 import subprocess
+import threading
 
 #ultrasonic = DistanceSensor(ECHO=17, TRIG=4)
 #RGB LED
@@ -55,7 +56,20 @@ font = ImageFont.load_default()
 # IP String
 cmd = "hostname -I | cut -d\' \' -f1"
 IP = subprocess.check_output(cmd, shell = True )
-#<------End Oled Configuration------>
+#<------End Oled Configuration------>#
+
+auto_process = None
+
+def rouge2_auto_on():
+    global auto_process
+    if auto_process == None:
+       auto_process = subprocess.Popen(["python3","rouge2_auto.py"])
+
+def rouge2_auto_off():
+    global auto_process
+    if auto_process != None:
+       auto_process.terminate()
+       auto_process = None
         
 def data_received(data):
     auto_manual(data)
@@ -65,52 +79,51 @@ def auto_manual(command):
     if command == "9":
         GPIO.output(26, True)
         GPIO.output(16, False)
-        #manual_mode
-        #auto_mode.exit() 
+        rouge2_auto_off()
         print ("Green On")
     elif command == "11":
          GPIO.output(16, True)
          GPIO.output(26, False)
-         #autoMode
-         #manual_mode.terminate()
+         rouge2_auto_on()
          print ("Blue On")
-
+    
 def manual_mode(command):
     #Dpad Forward
     if command == "1":
-         rouge2_manual.Forward()
+         rouge2_motors.Forward()
     elif command == "2":
-         rouge2_manual.Stop()
+         rouge2_motors.Stop()
 
         #Dpad Reverse
     elif command == "3":
-         rouge2_manual.Reverse()
+         rouge2_motors.Reverse()
     elif command == "4":
-         rouge2_manual.Stop()
+         rouge2_motors.Stop()
 
     #Dpad Left
     elif command == "5":
-         rouge2_manual.Left()
+         rouge2_motors.Left()
     elif command == "6":
-         rouge2_manual.Stop()
+         rouge2_motors.Stop()
 
     #Dpad Right
     elif command == "7":
-         rouge2_manual.Right()
+         rouge2_motors.Right()
     elif command == "8":
-         rouge2_manual.Stop()
+         rouge2_motors.Stop()
 
 BluetoothServer(data_received)
 
 try:
     while True:
-
+         
         # Draw a black filled box to clear the image.
          draw.rectangle((0,0,width,height), outline=0, fill=0)
          def sonic_sensor(): 
              range = rouge2_sensor.Sensor()
              return "Distance: %scm" % str(range)
              print (range)
+             time.sleep(100)
 
          draw.text((x, top),       "IP: " + str(IP),  font=font, fill=255)
          draw.text((x, top+16),    "Rouge2 is online", font=font, fill=255)
