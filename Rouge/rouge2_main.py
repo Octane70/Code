@@ -1,5 +1,5 @@
 import sys
-import os
+#import os
 sys.path.insert(0, "/home/pi/rouge/bluepad")
 from bluepad.btcomm import BluetoothServer
 from signal import pause
@@ -12,9 +12,7 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 import subprocess
-import threading
 
-#ultrasonic = DistanceSensor(ECHO=17, TRIG=4)
 #RGB LED
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -58,11 +56,14 @@ cmd = "hostname -I | cut -d\' \' -f1"
 IP = subprocess.check_output(cmd, shell = True )
 #<------End Oled Configuration------>#
 
+#Globals
 auto_process = None
 
+#Auto mode on snd off functions
 def rouge2_auto_on():
     global auto_process
     if auto_process == None:
+       rouge2_motors.Stop()
        auto_process = subprocess.Popen(["python3","rouge2_auto.py"])
 
 def rouge2_auto_off():
@@ -70,11 +71,13 @@ def rouge2_auto_off():
     if auto_process != None:
        auto_process.terminate()
        auto_process = None
-        
+
+#Data to Bluetooth server        
 def data_received(data):
     auto_manual(data)
     manual_mode(data) 
 
+#Auto and manual buttons
 def auto_manual(command):
     if command == "9":
         GPIO.output(26, True)
@@ -86,8 +89,11 @@ def auto_manual(command):
          GPIO.output(26, False)
          rouge2_auto_on()
          print ("Blue On")
-    
+
 def manual_mode(command):
+    global auto_process
+    if auto_process !=None:
+       return
     #Dpad Forward
     if command == "1":
          rouge2_motors.Forward()
@@ -137,8 +143,6 @@ try:
               draw.text((x, top+25),     "Autonomous mode", font=font, fill=255)
          else:
              draw.text((x, top+25),     " ", font=font, fill=255)
-
-         #range = distance.Sensor()
 
          draw.text((x, top+35),    sonic_sensor(), font=font, fill=255)
 
