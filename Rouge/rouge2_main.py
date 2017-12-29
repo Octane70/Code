@@ -1,10 +1,9 @@
 import sys
-#import os
 sys.path.insert(0, "/home/pi/rouge/bluepad")
 from bluepad.btcomm import BluetoothServer
 from signal import pause
 import RPi.GPIO as GPIO
-import rouge2_sensor
+from rouge2_sensor import Sensor
 import rouge2_motors
 import time
 import Adafruit_SSD1306
@@ -16,39 +15,26 @@ import subprocess
 #RGB LED
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-#GPIO.setup(6,GPIO.OUT) # Red
-#GPIO.output(6,True)     # Red set to High
 GPIO.setup(16,GPIO.OUT) # Green
 GPIO.output(16,False)    # Green set to High
 GPIO.setup(26,GPIO.OUT) # Blue
 GPIO.output(26,True)    # Blue set to High
 
 # <------Start Oled Configuration------>
-RST = None     # on the PiOLED this pin isnt used
-# 128x32 display with hardware I2C:
+RST = None
 disp = Adafruit_SSD1306.SSD1306_128_64(rst=RST)
-# Initialize library.
 disp.begin()
-# Clear display.
 disp.clear()
 disp.display()
-# Create blank image for drawing.
-# Make sure to create image with mode '1' for 1-bit color.
 width = disp.width
 height = disp.height
 image = Image.new('1', (width, height))
-# Get drawing object to draw on image.
 draw = ImageDraw.Draw(image)
-# Draw a black filled box to clear the image.
 draw.rectangle((0,0,width,height), outline=0, fill=0)
-# Draw some shapes.
-# First define some constants to allow easy resizing of shapes.
 padding = -2
 top = padding
 bottom = height-padding
-# Move left to right keeping track of the current x position for drawing shapes.
 x = 0
-# Load default font.
 font = ImageFont.load_default()    
 
 # IP String
@@ -70,12 +56,15 @@ def rouge2_auto_off():
     global auto_process
     if auto_process != None:
        auto_process.terminate()
+       rouge2_motors.Stop()
        auto_process = None
 
 #Data to Bluetooth server        
 def data_received(data):
     auto_manual(data)
     manual_mode(data) 
+    rouge2_motors.lm_pwm(data)
+    rouge2_motors.rm_pwm(data)
 
 #Auto and manual buttons
 def auto_manual(command):
@@ -90,6 +79,7 @@ def auto_manual(command):
          rouge2_auto_on()
          print ("Blue On")
 
+#manual motor control
 def manual_mode(command):
     global auto_process
     if auto_process !=None:
@@ -125,16 +115,19 @@ try:
          
         # Draw a black filled box to clear the image.
          draw.rectangle((0,0,width,height), outline=0, fill=0)
-         def sonic_sensor(): 
-             range = rouge2_sensor.Sensor()
-             return "Distance: %scm" % str(range)
-             print (range)
-             time.sleep(100)
+         def sonic_sensor():
+             if (GPIO.input(16) == False): #Green Led On
+                 range = Sensor()
+                 return "Distance: %scm" % str(range)
+                 print (range)
+                 time.sleep(100)
+             else:
+                 return
 
          draw.text((x, top),       "IP: " + str(IP),  font=font, fill=255)
          draw.text((x, top+16),    "Rouge2 is online", font=font, fill=255)
 
-         if (GPIO.input(16) == False): #Green Led Off
+         if (GPIO.input(16) == False): #Green Led On
               draw.text((x, top+25),     "Manual mode", font=font, fill=255)
          else: 
              draw.text((x, top+25),     "  ", font=font, fill=255)
@@ -144,7 +137,10 @@ try:
          else:
              draw.text((x, top+25),     " ", font=font, fill=255)
 
-         draw.text((x, top+35),    sonic_sensor(), font=font, fill=255)
+         if (GPIO.input(16) == False): #Green Led On
+             draw.text((x, top+35),    sonic_sensor(), font=font, fill=255)
+         else:
+             draw.text((x, top+35),     " ", font=font, fill=255)
 
          # Display image.
          disp.image(image)

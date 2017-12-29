@@ -29,7 +29,19 @@ GPIO.output(24, False)
 GPIO.output(27, False)
 GPIO.output(22, False)
 
-print ("rouge2 manual")
+print ("rouge2 motors")
+
+#Motor speed control
+def lm_pwm(command):
+    if command == "14":
+       print ("LH PWM Pos")
+    elif command == "15":
+       print ("LH PWM Neg")
+def rm_pwm(command):
+   if command == "16":
+      print ("RH PWM Pos")
+   elif command == "17":
+       print ("RH PWM Neg")
     
 #stop all motors
 def Stop():
