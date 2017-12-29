@@ -20,7 +20,6 @@ def stop():
     
 stop()
 count=0
-#distance = Sensor()
 
 while True:
  i=0
