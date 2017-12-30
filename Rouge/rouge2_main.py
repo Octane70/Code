@@ -73,7 +73,7 @@ def auto_manual(command):
         GPIO.output(16, False)
         rouge2_auto_off()
         print ("Green On")
-    elif command == "11":
+    elif command == "10":
          GPIO.output(16, True)
          GPIO.output(26, False)
          rouge2_auto_on()

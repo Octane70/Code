@@ -33,14 +33,14 @@ print ("rouge2 motors")
 
 #Motor speed control
 def lm_pwm(command):
-    if command == "14":
+    if command == "13":
        print ("LH PWM Pos")
-    elif command == "15":
+    elif command == "14":
        print ("LH PWM Neg")
 def rm_pwm(command):
-   if command == "16":
+   if command == "15":
       print ("RH PWM Pos")
-   elif command == "17":
+   elif command == "16":
        print ("RH PWM Neg")
     
 #stop all motors
