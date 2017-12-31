@@ -1,4 +1,6 @@
+import os
 import sys
+import subprocess
 sys.path.insert(0, "/home/pi/rouge/bluepad")
 from bluepad.btcomm import BluetoothServer
 from signal import pause
@@ -10,7 +12,6 @@ import Adafruit_SSD1306
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
-import subprocess
 
 #RGB LED
 GPIO.setmode(GPIO.BCM)
@@ -45,7 +46,7 @@ IP = subprocess.check_output(cmd, shell = True )
 #Globals
 auto_process = None
 
-#Auto mode on snd off functions
+#Auto mode on and off functions
 def rouge2_auto_on():
     global auto_process
     if auto_process == None:
@@ -62,7 +63,8 @@ def rouge2_auto_off():
 #Data to Bluetooth server        
 def data_received(data):
     auto_manual(data)
-    manual_mode(data) 
+    manual_mode(data)
+    shutdown(data) 
     rouge2_motors.lm_pwm(data)
     rouge2_motors.rm_pwm(data)
 
@@ -78,8 +80,16 @@ def auto_manual(command):
          GPIO.output(26, False)
          rouge2_auto_on()
          print ("Blue On")
-
-#manual motor control
+#Shutdown rouge2
+def shutdown(command):
+    if command == "12":
+       rouge2_motors.Stop()
+       GPIO.cleanup()
+       disp.clear()
+       disp.display()
+       os.system("sudo poweroff")
+   
+#Manual motor control
 def manual_mode(command):
     global auto_process
     if auto_process !=None:
