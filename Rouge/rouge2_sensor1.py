@@ -6,16 +6,12 @@ GPIO.setwarnings(False)
 TRIG = 8
 ECHO = 5
 
-#Sensor2
-#TRIG = 5
-#ECHO = 6
-
 #print ("Distance Measurement In Progress")
 
 GPIO.setup(TRIG,GPIO.OUT)
 GPIO.setup(ECHO,GPIO.IN)
 
-def Sensor():
+def Sensor1():
 
     while True:
 

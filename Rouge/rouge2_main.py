@@ -5,7 +5,8 @@ sys.path.insert(0, "/home/pi/rouge/bluepad")
 from bluepad.btcomm import BluetoothServer
 from signal import pause
 import RPi.GPIO as GPIO
-from rouge2_sensor import Sensor
+from rouge2_sensor1 import Sensor1
+from rouge2_sensor2 import Sensor2
 import rouge2_motors
 import time
 import Adafruit_SSD1306
@@ -125,11 +126,20 @@ try:
          
         # Draw a black filled box to clear the image.
          draw.rectangle((0,0,width,height), outline=0, fill=0)
-         def sonic_sensor():
+         def sonic_sensor1():
              if (GPIO.input(16) == False): #Green Led On
-                 range = Sensor()
-                 return "Distance: %scm" % str(range)
-                 print (range)
+                 range1 = Sensor1()
+                 return "Dist.front: %scm" % str(range1)
+                 print (range1)
+                 time.sleep(100)
+             else:
+                 return
+         
+         def sonic_sensor2():
+             if (GPIO.input(16) == False): #Green Led On
+                 range2 = Sensor2()
+                 return "Dist.rear: %scm" % str(range2)
+                 print (range2)
                  time.sleep(100)
              else:
                  return
@@ -147,10 +157,18 @@ try:
          else:
              draw.text((x, top+25),     " ", font=font, fill=255)
 
+         # Front and rear ultra sonic sensors
+         #Front sensor
          if (GPIO.input(16) == False): #Green Led On
-             draw.text((x, top+35),    sonic_sensor(), font=font, fill=255)
+             draw.text((x, top+35),   sonic_sensor1(), font=font, fill=255)
          else:
              draw.text((x, top+35),     " ", font=font, fill=255)
+
+         #Rear sensor
+         if (GPIO.input(16) == False): #Green Led On
+             draw.text((x, top+45),   sonic_sensor2(), font=font, fill=255)
+         else:
+             draw.text((x, top+45),     " ", font=font, fill=255)
 
          # Display image.
          disp.image(image)
