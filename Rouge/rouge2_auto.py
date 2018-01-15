@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO                    
 import time
 import rouge2_motors
-from rouge2_sensor import Sensor
+from rouge2_sensor1 import Sensor1
 
 def forward():
     rouge2_motors.Forward()
@@ -25,7 +25,7 @@ while True:
  i=0
  avgDistance=0
  for i in range(5):
-  distance = Sensor() 
+  distance = Sensor1() 
   avgDistance=avgDistance+distance
  avgDistance=avgDistance/5
  print (avgDistance)
