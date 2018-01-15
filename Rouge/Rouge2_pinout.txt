@@ -10,7 +10,7 @@ pin8/BCM14 - na
 pin9/Ground - ground to H-bridge - black
 pin10/BCM15 - na
 pin11/BCM17 - na
-pin12/BCM18 - right motor pwm
+pin12/BCM18 - na
 pin13/BCM27 - right motor//2ina - yellow
 pin14/Ground - na
 pin15/BCM22 - right motor//2inb - green
@@ -21,7 +21,7 @@ pin19/BCM10 - na
 pin20/Ground - na
 pin21/BCM9 - na
 pin22/BCM25 - na 
-pin23/BCM11 - na
+pin23/BCM11 - sonic sensor2 trig - green
 pin24/BCM8 - sonic sensor1 trig - green
 pin25/Ground - red led ground - black
 pin26/BCM7 - na
@@ -29,9 +29,9 @@ pin27/BCM0 - na
 pin28/BCM1 - na
 pin29/BCM5 - sonic sensor1 ech0 - yellow
 pin30/Ground - ground to led/uss board - black
-pin31/BCM6 - RGB red - red
-pin32/BCM12 - left motor pwm
-pin33/BCM13 - na
+pin31/BCM6 - sonic sensor2 ech0 - yellow
+pin32/BCM12 - left motor pwm - white
+pin33/BCM13 - right motor pwm - grey
 pin34/Ground - na
 pin35/BCM19 - na
 pin36/BCM16 - RGB green - green
