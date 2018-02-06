@@ -66,8 +66,6 @@ def data_received(data):
     auto_manual(data)
     manual_mode(data)
     shutdown(data) 
-    rouge2_motors.lm_pwm(data)
-    rouge2_motors.rm_pwm(data)
 
 #Auto and manual buttons
 def auto_manual(command):
