@@ -8,6 +8,7 @@ import RPi.GPIO as GPIO
 from rouge2_sensor1 import Sensor1
 from rouge2_sensor2 import Sensor2
 import rouge2_motors
+import alsaaudio
 import time
 import Adafruit_SSD1306
 from PIL import Image
@@ -46,6 +47,9 @@ IP = subprocess.check_output(cmd, shell = True )
 
 #Globals
 auto_process = None
+m = alsaaudio.Mixer('PCM')
+#vol = m.getvolume()
+vol = 100
 
 #Auto mode on and off functions
 def rouge2_auto_on():
@@ -65,7 +69,8 @@ def rouge2_auto_off():
 def data_received(data):
     auto_manual(data)
     manual_mode(data)
-    shutdown(data) 
+    shutdown(data)
+    vol_ctrl(data) 
 
 #Auto and manual buttons
 def auto_manual(command):
@@ -79,6 +84,7 @@ def auto_manual(command):
          GPIO.output(26, False)
          rouge2_auto_on()
          print ("Blue On")
+
 #Shutdown rouge2
 def shutdown(command):
     if command == "12":
@@ -87,6 +93,23 @@ def shutdown(command):
        disp.clear()
        disp.display()
        os.system("sudo poweroff")
+
+#Speaker volume control
+def vol_ctrl(command):
+    global vol
+    m.setvolume(vol)
+    if command == "15":
+       if (vol < 100):
+           vol = vol + 1
+           print (vol)
+       else:
+            return
+    elif command == "16":
+       if (vol > 0):
+           vol = vol - 1
+           print (vol)
+       else:
+            return
    
 #Manual motor control
 def manual_mode(command):
