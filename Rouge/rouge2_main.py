@@ -47,7 +47,9 @@ IP = subprocess.check_output(cmd, shell = True )
 
 #Globals
 auto_process = None
-m = alsaaudio.Mixer('PCM')
+volume = alsaaudio.Mixer('PCM')
+mp3_file = ('sounds/R2D2-yeah.mp3')
+#sound = off
 #vol = m.getvolume()
 vol = 100
 
@@ -70,7 +72,8 @@ def data_received(data):
     auto_manual(data)
     manual_mode(data)
     shutdown(data)
-    vol_ctrl(data) 
+    vol_ctrl(data)
+    sound_ctrl(data) 
 
 #Auto and manual buttons
 def auto_manual(command):
@@ -94,10 +97,20 @@ def shutdown(command):
        disp.display()
        os.system("sudo poweroff")
 
+#Sound effect on and off
+def sound_ctrl(command):
+   # global sound
+    if command == "13":
+       subprocess.Popen(["mpg123",mp3_file])
+       print ("Sound on")
+    elif command == "14":
+       subprocess.call(['killall', 'mpg123'])
+       print ("Sound off")
+
 #Speaker volume control
 def vol_ctrl(command):
     global vol
-    m.setvolume(vol)
+    volume.setvolume(vol)
     if command == "15":
        if (vol < 100):
            vol = vol + 1
