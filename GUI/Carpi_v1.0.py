@@ -1,7 +1,16 @@
 #Python 3.5.3
+
+#---inputs---#
+#Version
 GUI_Version = 1.0
+
+#CPU Temp min/max in celsius
+cpu_fan_min= "45.0"
+cpu_fan_max= "50.0"
+
+#---Modules---#
 from tkinter import *
-#from PIL import Image, ImageTk
+from PIL import Image, ImageTk
 import numpy as np
 import RPi.GPIO as gpio
 import sys
@@ -11,9 +20,10 @@ import subprocess
 import socket
 #import cv2
 #import obd
-#import tkFileDialog
+import tkinter.filedialog
 #from omxplayer import OMXPlayer
 from time import sleep
+import datetime
 
 #Initiate gpio's for relay
 gpio.setmode(gpio.BCM)
@@ -117,7 +127,7 @@ def Window_4():
     window3.grid_remove()
     window4.grid(row=1, column=0, columnspan=800, rowspan=2, sticky=NW) 
     
-B4=Button(root, text="Rpi Diagnostics", font= root_font, command= Window_4, width=12, height=3)
+B4=Button(root, text="Rpi Status", font= root_font, command= Window_4, width=12, height=3)
 B4.grid(row=0, column=4, sticky=NW)
 
 def Minimize():
@@ -265,11 +275,14 @@ lmain.grid(row=0, column=0, sticky=NW)
 #Window2 Buttons
 #Take a Picture
 def Capture_Frame_Press(event):
+    os.chdir ("/home/pi/Pictures")
+    ts = datetime.datetime.now()
+    filename = "{}.jpg".format(ts.strftime("%Y-%m-%d_%H-%M-%S"))
     W2F3.config(bg = "red")
     print ("Capture Press")
     if W2F3["bg"] == "red":
        _, saveimage= cap.read()
-       cv2.imwrite('max.jpg', saveimage)
+       cv2.imwrite(filename, saveimage)
 
 def Capture_Frame_Release(event):
     W2F3.config(bg = "green")
@@ -299,15 +312,15 @@ W2B3.grid(row=4, column=1, sticky=NW)
 
 #Folders
 def Picture_Folder():
-    tkFileDialog.askdirectory(initialdir='/home/pi/Pictures')
-    print ("Pic folder")
+    tkinter.filedialog.askopenfilename(initialdir='/home/pi/Pictures')
+    print ("Picture folder")
     
 W2B4=Button(W2F2, text="Pictures", command= Picture_Folder, width=5, height=2)
 W2B4.grid(row=8, column=0, sticky=NW)
 
 def Video_Folder():
-    tkFileDialog.askdirectory(initialdir='/home/pi/Videos')
-    print ("Vid Folder")
+    tkinter.filedialog.askopenfilename(initialdir='/home/pi/Videos')
+    print ("Video Folder")
     
 W2B5=Button(W2F2, text="Videos", command= Video_Folder, width=5, height=2)
 W2B5.grid(row=8, column=1, sticky=NW)
@@ -327,19 +340,21 @@ W3L4 = Label(window3, text="Intake Temp= 40", font=W3_font).grid(row=6, column=0
 W3F1 = Frame(window3, borderwidth=5, bg="grey", relief="ridge", width=141, height=4) #Divider1
 W3F1.grid(row=2, column=0, columnspan=100, rowspan=1, sticky=W)  #Divider1 grid
 
-#---Rpi Diagnostics---Window4 Layout---#
+#---Rpi Status---Window4 Layout---#
 #-------------------------------#
 
 #Window4 Labels
 W4_font = ('helvetica', 12, 'bold')
-W4L1 = Label(window4, text="GUI Version:", font=W4_font).grid(row=1, column=0, sticky=W)
-W4L2 = Label(window4, text="CPU Temp:", font=W4_font).grid(row=2, column=0, sticky=W)
-W4L3 = Label(window4, text="HostName:", font=W4_font).grid(row=3, column=0, sticky=W)
-W4L4 = Label(window4, text="IP Address:", font=W4_font).grid(row=4, column=0, sticky=W)
+W4L1 = Label(window4, text="Hostname:", font=W4_font).grid(row=1, column=0, sticky=W)
+W4L2 = Label(window4, text="GUI Version:", font=W4_font).grid(row=2, column=0, sticky=W)
+W4L3 = Label(window4, text="IP Address:", font=W4_font).grid(row=3, column=0, sticky=W)
+W4L4 = Label(window4, text="CPU Temp:", font=W4_font).grid(row=4, column=0, sticky=W)
+W4L5 = Label(window4, text="CPU Fan Status:", font=W4_font).grid(row=5, column=0, sticky=W)
 
+#Window4 Variables
 cputemp = StringVar()
 
-#Rpi3 hostname & IPAddres
+#Rpi3 hostname & IP Address
 host = socket.gethostname()
 ipnum = subprocess.check_output(["hostname", "-I"]).split()[0]
 
@@ -347,10 +362,14 @@ def rpi_widgets():
     global host
     global ipnum
     global GUI_Version
-    W4L5 = Label(window4, text=GUI_Version, font=W4_font).grid(row=1,column=1,sticky=W)
-    W4L6 = Label(window4, textvariable=cputemp, font=W4_font).grid(row=2,column=1,sticky=W)
-    W4L7 = Label(window4, text=host, font=W4_font).grid(row=3,column=1,sticky=W)
-    W4L8 = Label(window4, text=ipnum, font=W4_font).grid(row=4,column=1,rowspan=8,sticky=W)
+    global cpu_fan_default
+    W4L6 = Label(window4, text=host, font=W4_font).grid(row=1,column=1,sticky=W)
+    W4L7 = Label(window4, text=GUI_Version, font=W4_font).grid(row=2,column=1,sticky=W)
+    W4L8 = Label(window4, text=ipnum, font=W4_font).grid(row=3,column=1,sticky=W)
+    W4L9 = Label(window4, textvariable=cputemp, font=W4_font).grid(row=4,column=1,sticky=W)
+
+W4L10 = Label(window4, text="Fan Off", font=W4_font)
+W4L10.grid(row=5,column=1,sticky=W)
     
 # Rpi3 CPU Temperature
 def getTempCPU():
@@ -364,6 +383,24 @@ def getTempCPU():
     except:
         print ("Unable to transform to float")
 
+# CPU Fan on/off
+def cpu_fan():
+    global cpu_fan_min
+    global cpu_fan_max
+    global getTempCPU
+    cpu_fan_data = getTempCPU()
+    cpu_fan_temp = ('%1.0f' % cpu_fan_data)
+    if cpu_fan_temp >= cpu_fan_max:   
+       #relay_ch3_on()
+       if W4L10["text"] == "Fan Off":
+          W4L10["text"] = "Fan On"
+          print ("Case Fan On")
+    elif cpu_fan_temp <= cpu_fan_min:
+       #relay_ch3_off()
+        if W4L10["text"] == "Fan On":
+           W4L10["text"] = "Fan Off"
+           print ("Case Fan Off")
+
 def rpi_updates():
     global getTempCPU
     CPUTemp = getTempCPU()
@@ -372,6 +409,7 @@ def rpi_updates():
     
 #show_frame() 
 rpi_widgets()
+cpu_fan()
 root.after(1000, rpi_updates)
 root.mainloop()
 gpio.cleanup()	
