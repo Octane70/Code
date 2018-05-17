@@ -17,7 +17,6 @@ import Adafruit_DHT
 import os
 import spidev
 import RPi.GPIO as gpio
-#import commands
 import signal
 
 #20x4 LCD
@@ -36,6 +35,7 @@ counter = 0
 # Open SPI bus
 spi = spidev.SpiDev()
 spi.open(0,0)
+spi.max_speed_hz=1000000
 
 # Initiate gpio's for relay
 gpio.setmode(gpio.BCM)
@@ -94,7 +94,7 @@ L18 = Label(window2, text ="Yellow = Auto").grid(row=11, column=1, sticky=W)
 L19 = Label(window2, text ="Black = Off").grid(row=12, column=0, sticky=W)
 L38 = Label(window3, text ="Watering Days:").grid(row=1, column=0, sticky=W)
 L20 = Label(window3, text ="Timers:").grid(row=5, column=0, sticky=W)
-L21= Label(window3, text ="Zone1 On:").grid(row=6, column=0, sticky=W)
+L21 = Label(window3, text ="Zone1 On:").grid(row=6, column=0, sticky=W)
 L22 = Label(window3, text ="Zone1 Off:").grid(row=7, column=0, sticky=W)
 L23 = Label(window3, text ="Zone2 On:").grid(row=9, column=0, sticky=W)
 L24 = Label(window3, text ="Zone2 Off:").grid(row=10, column=0, sticky=W)
@@ -154,19 +154,19 @@ frame8.grid(row=5, column=0, columnspan=2, rowspan=1, sticky=W)  #Divider8
 #Text
 #Zone1 On
 T1 = Text(window3, width=10, height=1)
-T1.insert("1.0", "1830\n") #Default value
+T1.insert("1.0", "0430\n") #Default value
 T1.grid(row=6, column=1, sticky=W)
 #Zone1 Off
 T2 = Text(window3, width=10, height=1)
-T2.insert("1.0", "1833\n") #Default value
+T2.insert("1.0", "0440\n") #Default value
 T2.grid(row=7, column=1, sticky=W)
 #Zone2 On
 T3 = Text(window3, width=10, height=1)
-T3.insert("1.0", "1900\n") #Default value
+T3.insert("1.0", "0500\n") #Default value
 T3.grid(row=9, column=1, sticky=W)
 #Zone2 Off
 T4 = Text(window3, width=10, height=1)
-T4.insert("1.0", "1905\n") #Default value
+T4.insert("1.0", "0510\n") #Default value
 T4.grid(row=10, column=1, sticky=W)
 #G/H Fan On
 T5 = Text(window3, width=10, height=1)
@@ -194,15 +194,15 @@ T10.insert("1.0", "Sunday\n") #Default value
 T10.grid(row=2, column=0, sticky=W)
 #Day 2
 T11 = Text(window3, width=10, height=1)
-T11.insert("1.0","Wednesday\n") #Default value
+T11.insert("1.0","Tuesday\n") #Default value
 T11.grid(row=2, column=1, sticky=W)
 #Day 3
 T12 = Text(window3, width=10, height=1)
-T12.insert("1.0", "Friday\n") #Default value
+T12.insert("1.0", "Thursday\n") #Default value
 T12.grid(row=3, column=0, sticky=W)
 #Day 4
 T13 = Text(window3, width=10, height=1)
-T13.insert("1.0", "N/A") #Default value
+T13.insert("1.0", "Saturday") #Default value
 T13.grid(row=3, column=1, sticky=W)
 
 # Get data
@@ -469,33 +469,33 @@ def Zone2Timer():
        print ("Zone2 Off")
 
 #Temperature controlled Green House fan // relay_ch4
-def GH_FanAuto():
-    global temperature
-    global gh_fan_temp
-    if counter % 30 == 0:
-       humidity, temperature = Adafruit_DHT.read_retry(22, 18)
-    if temperature is not None:
-       gh_fan_temp = ('%1.0f' % temperature)
-       print (gh_fan_temp)
-    else:
-       print ('GUI Failed to get reading. Try again!')
+#def GH_FanAuto():
+    #global temperature
+    #global gh_fan_temp
+    #if counter % 30 == 0:
+       #humidity, temperature = Adafruit_DHT.read_retry(22, 18)
+    #if temperature is not None:
+       #gh_fan_temp = ('%1.0f' % temperature)
+       #print (gh_fan_temp)
+    #else:
+       #print ('GUI Failed to get reading. Try again!')
        
-    e_time = T5_get_data
-    gh_fan_temp_max = e_time.rstrip('\n')
-    print (gh_fan_temp_max)
+    #e_time = T5_get_data
+    #gh_fan_temp_max = e_time.rstrip('\n')
+    #print (gh_fan_temp_max)
     
-    f_time = T6_get_data
-    gh_fan_temp_min = f_time.rstrip('\n')
-    print (gh_fan_temp_min)
+    #f_time = T6_get_data
+    #gh_fan_temp_min = f_time.rstrip('\n')
+    #print (gh_fan_temp_min)
     
-    if gh_fan_temp >= gh_fan_temp_max:   
-       relay_ch4_on()
-       frame5["bg"] = "red"
-       print ("G/H Fan On")
-    elif gh_fan_temp <= gh_fan_temp_min:
-       relay_ch4_off()
-       frame5["bg"] = "yellow"
-       print ("G/H Fan Off")
+    #if gh_fan_temp >= gh_fan_temp_max:   
+       #relay_ch4_on()
+       #frame5["bg"] = "red"
+       #print ("G/H Fan On")
+    #elif gh_fan_temp <= gh_fan_temp_min:
+       #relay_ch4_off()
+       #frame5["bg"] = "yellow"
+       #print ("G/H Fan Off")
        
 # Functions for Case temp sensor
 def temp_raw():
@@ -615,10 +615,10 @@ def updates():
     if counter % 20 == 0:
        CaseTemp = read_temp()
     #Import CPU Temperature // 10 second refresh rate    
-    if counter % 10 == 0:    
+    #if counter % 15 == 0:    
        CPUTemp = getTempCPU()
-    #Import moisture from moisture sensors // 1 second refresh rate
-    if counter % 10 == 0:   
+    #Import moisture from moisture sensors // 10 second refresh rate
+    #if counter % 15 == 0:   
        moisture1 = ReadChannel(0)
        moisture2 = ReadChannel(1)
        moisture3 = ReadChannel(2)
@@ -632,8 +632,8 @@ def updates():
        Zone2Timer()
 
     #G/H Fan
-    if B3["text"] == "Auto":
-       GH_FanAuto()    
+    #if B3["text"] == "Auto":
+       #GH_FanAuto()    
 
     #Case Fan
     if B4["text"] == "Auto":
@@ -671,7 +671,7 @@ def updates():
            
 Zone1Timer()
 Zone2Timer()
-GH_FanAuto()
+#GH_FanAuto()
 CaseFanAuto()
 gui_widgets()
 root.after(1000, updates)
