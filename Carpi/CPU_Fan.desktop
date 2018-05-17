@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Application
+Name=CPU_Fan
+Comment= Start and stop CPU fan based on temperature
+Exec= sudo python3 /home/pi/Carpi/CPU_Fan.py
+StartupNotify=false
+Terminal=true
+Hidden=false

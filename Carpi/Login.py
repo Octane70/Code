@@ -1,7 +1,10 @@
 from tkinter import*
 import os
+import subprocess
 
 login = Tk()
+login.geometry("335x335+230+50")
+login.resizable(width=FALSE, height=FALSE)
 login.title('XJ Login')
 
 
@@ -30,7 +33,7 @@ def entry(value):
         # check pin
 
         if pin == "1234":
-            os.system("sudo python3 Carpi.py")
+            subprocess.Popen(["sudo","python3","Carpi.py"])
             login.destroy()
             print("PIN OK")
         else:
@@ -61,7 +64,7 @@ keys = [
 for y, row in enumerate(keys, 1):
     for x, key in enumerate(row):
 
-        B1 = Button(login, text=key, command=lambda val=key:entry(val))
+        B1 = Button(login, text=key, command=lambda val=key:entry(val), width=8, height=3)
         B1.grid(row=y, column=x, ipadx=10, ipady=10)
         
 login.mainloop()

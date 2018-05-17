@@ -4,12 +4,8 @@
 #Version
 GUI_Version = 1.0
 
-#CPU Temp min/max in celsius
-cpu_fan_min= "45.0"
-cpu_fan_max= "50.0"
-
 #---Modules---#
-from tkinter import *
+from tkinter import*
 from PIL import Image, ImageTk
 import numpy as np
 import RPi.GPIO as gpio
@@ -26,25 +22,23 @@ import tkinter.filedialog
 from time import sleep
 import datetime
 
+#subprocess.Popen(["python","Auto_Locks.py"])
+
 #Initiate gpio's for relay
 gpio.setmode(gpio.BCM)
-gpio.setup(17, gpio.OUT) # relay 1
+#gpio 17 CPU Fan         # relay 1
 gpio.setup(27, gpio.OUT) # relay 2
 gpio.setup(22, gpio.OUT) # relay 3
 gpio.setup(23, gpio.OUT) # relay 4
 gpio.setwarnings(False)
 
 #set relay gpio's to true
-gpio.output(17, True) # relay 1
+#CPU Fan              # relay 1
 gpio.output(27, True) # relay 2
 gpio.output(22, True) # relay 3
 gpio.output(23, True) # relay 4
 
-#relay ch1 on and off
-def relay_ch1_on():
-    gpio.output(17, False) #Relay ch1 on
-def relay_ch1_off(): 
-    gpio.output(17, True) #Relay ch1 off
+#relay ch1 used for CPU Fan
 
 #relay ch2 on and off
 def relay_ch2_on():
@@ -63,7 +57,31 @@ def relay_ch4_on():
     gpio.output(23, False) #Relay ch4 on
 def relay_ch4_off(): 
     gpio.output(23, True) #Relay ch4 off
-     
+   
+#relay ch5 on and off
+def relay_ch5_on():
+    gpio.output(24, False) #Relay ch5 on
+def relay_ch5_off(): 
+    gpio.output(24, True) #Relay ch5 off
+    
+#relay ch6 on and off
+def relay_ch6_on():
+    gpio.output(25, False) #Relay ch6 on
+def relay_ch6_off(): 
+    gpio.output(25, True) #Relay ch6 off
+
+#relay ch7 on and off
+def relay_ch7_on():
+    gpio.output(5, False) #Relay ch7 on
+def relay_ch7_off(): 
+    gpio.output(5, True) #Relay ch7 off
+
+#relay ch8 on and off
+def relay_ch8_on():
+    gpio.output(6, False) #Relay ch7 on
+def relay_ch8_off(): 
+    gpio.output(6, True) #Relay ch8 off     
+        
 #OMXPlayer Wrapper
 #file_path = '/home/pi/video.h264'
 #player = OMXPlayer(file_path)
@@ -72,7 +90,7 @@ def relay_ch4_off():
 root = Tk()
 root.geometry("800x450+0+0")
 root.resizable(width=FALSE, height=FALSE)
-#root.overrideredirect(1)
+root.config(cursor="none")
 root.title('Jeep XJ GUI')
 
 #---Root Font---#
@@ -374,25 +392,15 @@ W4F3.grid(row=1, column=3, sticky=NW) # Keypad frame grid
 W4F1.grid_propagate(False) # Prevent status frame from resizing
 W4F2.grid_propagate(False) # Prevent button frame from resizing
 
-#Text
-#Fan off temp
-T1 = Text(W4F2, width=5, height=1)
-T1.insert("1.0", "45.0\n") #Default value
-T1.grid(row=8, column=0, sticky=W)
-#Fan on temp
-T2 = Text(W4F2, width=5, height=1)
-T2.insert("1.0", "50.0\n") #Default value
-T2.grid(row=8, column=1, sticky=W)
-
 #Window4 Labels
 W4_font = ('helvetica', 12, 'bold')
 W4L1 = Label(W4F1, text="Hostname:", font=W4_font).grid(row=1, column=0, sticky=W)
 W4L2 = Label(W4F1, text="GUI Version:", font=W4_font).grid(row=2, column=0, sticky=W)
 W4L3 = Label(W4F1, text="IP Address:", font=W4_font).grid(row=3, column=0, sticky=W)
 W4L4 = Label(W4F1, text="CPU Temp:", font=W4_font).grid(row=4, column=0, sticky=W)
-W4L5 = Label(W4F1, text="CPU Fan Status:", font=W4_font).grid(row=5, column=0, sticky=W)
+W4L5 = Label(W4F1, text="Space:", font=W4_font).grid(row=5, column=0, sticky=W)
 W4L6 = Label(W4F2, text="System Halt", font=W4_font).grid(row=1, column=0, columnspan=2, sticky=W)
-W4L7 = Label(W4F2, text="Manual Fan", font=W4_font).grid(row=5, column=0, columnspan=2, sticky=W)
+W4L7 = Label(W4F2, text="Space", font=W4_font).grid(row=5, column=0, columnspan=2, sticky=W)
 
 #Divider Frames
 W4F3 = Frame(W4F2, borderwidth=5, bg="grey", relief="ridge", width=95, height=4) #Divider1
@@ -418,14 +426,6 @@ def system_halt():
 W4B1=Button(W4F2, text="Shutdown", command= system_halt, width=8, height=2)
 W4B1.grid(row=3, column=0, columnspan=2,sticky=NW)
 
-def Manual_Fan():
-    #os.system("sudo shutdown -h now")
-    #os.system("sudo poweroff")
-    print ("System Halt")
-    
-W4B1=Button(W4F2, text="Auto", command= Manual_Fan, width=8, height=2)
-W4B1.grid(row=7, column=0, columnspan=2, sticky=NW)
-
 def rpi_widgets():
     global host
     global ipnum
@@ -435,9 +435,6 @@ def rpi_widgets():
     W4L7 = Label(W4F1, text=GUI_Version, font=W4_font).grid(row=2,column=1,sticky=W)
     W4L8 = Label(W4F1, text=ipnum, font=W4_font).grid(row=3,column=1,sticky=W)
     W4L9 = Label(W4F1, textvariable=cputemp, font=W4_font).grid(row=4,column=1,sticky=W)
-
-W4L10 = Label(W4F1, text="Fan Off", font=W4_font)
-W4L10.grid(row=5,column=1,sticky=W)
     
 # Rpi3 CPU Temperature
 def getTempCPU():
@@ -450,26 +447,7 @@ def getTempCPU():
         return temp_num
     except:
         print ("Unable to transform to float")
-
-# CPU Fan on/off
-def cpu_fan():
-    global cpu_fan_min
-    global cpu_fan_max
-    global getTempCPU
-    cpu_fan_data = getTempCPU()
-    cpu_fan_temp = ('%1.0f' % cpu_fan_data)
-    if cpu_fan_temp >= cpu_fan_max:   
-       #relay_ch3_on()
-       if W4L10["text"] == "Fan Off":
-          W4L10["text"] = "Fan On"
-          print ("Case Fan On")
-    elif cpu_fan_temp <= cpu_fan_min:
-       #relay_ch3_off()
-        if W4L10["text"] == "Fan On":
-           W4L10["text"] = "Fan Off"
-           print ("Case Fan Off")
-    root.after(1000, cpu_fan)
-    
+   
 def cpu_temp():
     global getTempCPU
     CPUTemp = getTempCPU()
@@ -478,7 +456,6 @@ def cpu_temp():
     
 #show_frame() 
 cpu_temp()
-cpu_fan()
 root.after(1000, rpi_widgets)
 root.mainloop()
 gpio.cleanup()	
