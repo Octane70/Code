@@ -8,6 +8,18 @@ import time
 import os
 import datetime
 
+#Distance
+dist = -2
+
+#Relay delay
+unlock_delay = 5
+lock_delay = 5
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(27, GPIO.OUT)
+GPIO.setup(22, GPIO.OUT)
+GPIO.setwarnings(False)
+
 def bluetooth_rssi(addr):
     # Open hci socket
     hci_sock = bt.hci_open_dev()
@@ -53,14 +65,27 @@ rssi_prev2 = -255
 near_cmd = 'br -n 1'
 far_cmd = 'br -f 1'
 
-dagar_addr = '70:28:8B:B3:30:01'
-emily_addr = '43:29:B1:55:00:00'
+rob_addr = '00:00:00:00:00:00'
 
 debug = 1
 
+def doors_unlock():
+     global far
+     if far == False:
+         GPIO.output(27, False)
+         time.sleep(unlock_delay)
+         GPIO.output(27, True)
+
+def doors_lock():
+     global far
+     if far == True:
+         GPIO.output(22, False)
+         time.sleep(lock_delay)
+         GPIO.output(22, True)
+
 while True:
     # get rssi reading for address
-    rssi = bluetooth_rssi(dagar_addr)
+    rssi = bluetooth_rssi(rob_addr)
 
     if debug:
         print datetime.datetime.now(), rssi, rssi_prev1, rssi_prev2, far, far_count
@@ -77,13 +102,10 @@ while True:
             far_count = 0
             os.system(near_cmd)
             print datetime.datetime.now(), "changing to near"
-        GPIO.setwarnings(False)
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(5, GPIO.OUT)
-        GPIO.output(5, GPIO.LOW)
-        time.sleep(1)
+            doors_unlock()
+            time.sleep(1)
 
-    elif rssi < -2 and rssi_prev1 < -2 and rssi_prev2 < -2:
+    elif rssi < dist and rssi_prev1 < dist and rssi_prev2 < dist:
         # if were near and single has been consisitenly low
 
         # need 10 in a row to set to far
@@ -94,13 +116,13 @@ while True:
             far_count = 0
             os.system(far_cmd)
             print datetime.datetime.now(), "changing to far"
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(6, GPIO.OUT)
-        GPIO.output(6, GPIO.HIGH)
-        time.sleep(1)
+            doors_lock()
+            time.sleep(1)
 
     else:
         far_count = 0
 
     rssi_prev1 = rssi
     rssi_prev2 = rssi_prev1
+    
+gpio.cleanup()	
