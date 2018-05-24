@@ -22,14 +22,13 @@ import tkinter.filedialog
 from time import sleep
 import datetime
 
-#subprocess.Popen(["python","Auto_Locks.py"])
-
 #Initiate gpio's for relay
 gpio.setmode(gpio.BCM)
 #gpio 17 CPU Fan         # relay 1
 gpio.setup(27, gpio.OUT) # relay 2
 gpio.setup(22, gpio.OUT) # relay 3
 gpio.setup(23, gpio.OUT) # relay 4
+gpio.setup(24, gpio.OUT) # relay 4
 gpio.setwarnings(False)
 
 #set relay gpio's to true
@@ -37,6 +36,7 @@ gpio.setwarnings(False)
 gpio.output(27, True) # relay 2
 gpio.output(22, True) # relay 3
 gpio.output(23, True) # relay 4
+gpio.output(24, True) # relay 5
 
 #relay ch1 used for CPU Fan
 
@@ -165,81 +165,99 @@ B5.grid(row=0, column=7, sticky=NW)
 #---Jeep Controls---Window1 Layout---#
 #------------------------------------#
 
+#Window1 Frames
+W1F1 = Frame(window1, borderwidth=5, relief="ridge", width=250, height=370) # Manual frame
+W1F1.grid(row=1, column=1, sticky=NW) # Manual frame grid
+W1F2 = Frame(window1, borderwidth=5, relief="ridge", width=250, height=370) # Alarm frame
+W1F2.grid(row=1, column=2, sticky=NW) # Alarm frame grid
+
+#Prevent Frames from resizing
+W1F1.grid_propagate(False) # Prevent status frame from resizing
+W1F2.grid_propagate(False) # Prevent button frame from resizing
+
 #Window1 Labels
 W1_font = ("helvetica", 10, "bold")
-W1L1 = Label(window1, text="Door Locks:", font= W1_font).grid(row=1, column=0, columnspan=2, sticky=W)
-W1L1 = Label(window1, text="Vehicle Start:", font= W1_font).grid(row=4, column=0, columnspan=2, sticky=W)
+W1L1 = Label(W1F1, text="Manual Controls", font= W1_font).grid(row=1, column=0, columnspan=2, sticky=W)
+W1L2 = Label(W1F1, text="Door Locks:", font= W1_font).grid(row=3, column=0, columnspan=2, sticky=W)
+W1L3 = Label(W1F1, text="Vehicle Start:", font= W1_font).grid(row=6, column=0, columnspan=2, sticky=W)
+W1L4 = Label(W1F2, text="Alarm Diagnostics:", font= W1_font).grid(row=1, column=0, columnspan=2, sticky=W)
 
-#Window1 Frames
-W1F1 = Frame(window1, borderwidth=3, bg="green", relief="ridge", width=123, height=25) # Door lock frame
-W1F1.grid(row=2, column=0, columnspan=1, rowspan=1, sticky=W) # Door lock grid
-W1F2 = Frame(window1, borderwidth=3, bg="green", relief="ridge", width=123, height=25) # Door unlock frame
-W1F2.grid(row=2, column=1, columnspan=1, rowspan=1, sticky=W) # Door unlock grid
-W1F3 = Frame(window1, borderwidth=3, bg="green", relief="ridge", width=123, height=25) # Vehicle start frame
-W1F3.grid(row=5, column=0, columnspan=1, rowspan=1, sticky=W) # Vehicle start grid
-W1F4 = Frame(window1, borderwidth=3, bg="green", relief="ridge", width=123, height=25) # Vehicle stop frame
-W1F4.grid(row=5, column=1, columnspan=1, rowspan=1, sticky=W) # vehicle stop grid
+#Window1 Dividers
+W1D1 = Frame(W1F1, borderwidth=5, bg="grey", relief="ridge", width=238, height=4) #Divider1
+W1D1.grid(row=2, column=0, columnspan=100, rowspan=1, sticky=W)  #Divider1 grid
+W1D2 = Frame(W1F2, borderwidth=5, bg="grey", relief="ridge", width=238, height=4) #Divider1
+W1D2.grid(row=2, column=0, columnspan=100, rowspan=1, sticky=W)  #Divider1 grid
+
+#Indicator Frames
+W1F4 = Frame(W1F1, borderwidth=3, bg="green", relief="ridge", width=118, height=25) # Door lock frame
+W1F4.grid(row=4, column=0, columnspan=1, rowspan=1, sticky=W) # Door lock grid
+W1F5 = Frame(W1F1, borderwidth=3, bg="green", relief="ridge", width=118, height=25) # Door unlock frame
+W1F5.grid(row=4, column=1, columnspan=1, rowspan=1, sticky=W) # Door unlock grid
+W1F6 = Frame(W1F1, borderwidth=3, bg="green", relief="ridge", width=118, height=25) # Vehicle start frame
+W1F6.grid(row=7, column=0, columnspan=1, rowspan=1, sticky=W) # Vehicle start grid
+W1F7 = Frame(W1F1, borderwidth=3, bg="green", relief="ridge", width=118, height=25) # Vehicle stop frame
+W1F7.grid(row=7, column=1, columnspan=1, rowspan=1, sticky=W) # vehicle stop grid
 
 #Window1 Buttons
 #Door Lock/Unlock
 def Door_Lock_Press(event):
-    relay_ch1_on()
-    W1F1.config(bg = "red")
+    relay_ch2_on()
+    W1F4.config(bg = "red")
     print ("Door Lock press")
     
 def Door_Lock_Release(event):
-    relay_ch1_off()
-    W1F1.config(bg = "green")
+    relay_ch2_off()
+    W1F4.config(bg = "green")
     print ("Door Lock release")
     
-W1B1=Button(window1, text="Lock", font= W1_font, width=12, height=3)
-W1B1.grid(row=3, column=0, sticky=NW)
+W1B1=Button(W1F1, text="Lock", font= W1_font, width=12, height=3)
+W1B1.grid(row=5, column=0, sticky=NW)
 W1B1.bind("<ButtonPress>", Door_Lock_Press)
 W1B1.bind("<ButtonRelease>", Door_Lock_Release)
 
 def Door_Unlock_Press(event):
-    relay_ch2_on()
-    W1F2.config(bg = "red")
+    relay_ch3_on()
+    W1F5.config(bg = "red")
     print ("Door Unlock press")
 
 def Door_Unlock_Release(event):
-    relay_ch2_off()
-    W1F2.config(bg = "green")
+    relay_ch3_off()
+    W1F5.config(bg = "green")
     print ("Door Unlock release")    
     
-W1B2=Button(window1, text="UnLock", font= W1_font, width=12, height=3)
-W1B2.grid(row=3, column=1, sticky=NW)
+W1B2=Button(W1F1, text="UnLock", font= W1_font, width=12, height=3)
+W1B2.grid(row=5, column=1, sticky=NW)
 W1B2.bind("<ButtonPress>", Door_Unlock_Press)
 W1B2.bind("<ButtonRelease>", Door_Unlock_Release)
 
 #Auto Start/Stop
 def Car_Start_Press(event):
-    relay_ch3_on()
-    W1F3.config(bg = "red")
+    relay_ch4_on()
+    W1F6.config(bg = "red")
     print ("Car Start press")
 
 def Car_Start_Release(event):
-    relay_ch3_off()
-    W1F3.config(bg = "green")
+    relay_ch4_off()
+    W1F6.config(bg = "green")
     print ("Car Start release")    
     
-W1B3=Button(window1, text="Start", font= W1_font, width=12, height=3)
-W1B3.grid(row=6, column=0, sticky=NW)
+W1B3=Button(W1F1, text="Start", font= W1_font, width=12, height=3)
+W1B3.grid(row=8, column=0, sticky=NW)
 W1B3.bind("<ButtonPress>", Car_Start_Press)
 W1B3.bind("<ButtonRelease>", Car_Start_Release)
 
 def Car_Stop_Press(event):
-    relay_ch4_on()
-    W1F4.config(bg = "red")
+    relay_ch5_on()
+    W1F7.config(bg = "red")
     print ("Car Stop press")
 
 def Car_Stop_Release(event):
-    relay_ch4_off()
-    W1F4.config(bg = "green")
+    relay_ch5_off()
+    W1F7.config(bg = "green")
     print ("Car Stop release")    
     
-W1B4=Button(window1, text="Stop", font= W1_font, width=12, height=3)
-W1B4.grid(row=6, column=1, sticky=NW)
+W1B4=Button(W1F1, text="Stop", font= W1_font, width=12, height=3)
+W1B4.grid(row=8, column=1, sticky=NW)
 W1B4.bind("<ButtonPress>", Car_Stop_Press)
 W1B4.bind("<ButtonRelease>", Car_Stop_Release)
 
@@ -261,18 +279,18 @@ CapFrame.grid_propagate(False) # Prevent camera capframe from resizing
 W2F2.grid_propagate(False) # Prevent button frame from resizing
 
 #Divider Frames
-W2F5 = Frame(W2F2, borderwidth=5, bg="grey", relief="ridge", width=141, height=4) #Divider1
-W2F5.grid(row=2, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider1 grid
-W2F6 = Frame(W2F2, borderwidth=5, bg="grey", relief="ridge", width=141, height=4) #Divider2
-W2F6.grid(row=5, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider2 grid
-W2F7 = Frame(W2F2, borderwidth=5, bg="grey", relief="ridge", width=141, height=4) #Divider3
-W2F7.grid(row=7, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider3 grid
-W2F8 = Frame(W2F2, borderwidth=5, bg="grey", relief="ridge", width=141, height=4) #Divider4
-W2F8.grid(row=9, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider4 grid
-W2F9 = Frame(W2F2, borderwidth=5, bg="grey", relief="ridge", width=141, height=4) #Divider5
-W2F9.grid(row=11, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider5 grid
-W2F10 = Frame(W2F2, borderwidth=5, bg="grey", relief="ridge", width=141, height=4) #Divider6
-W2F10.grid(row=13, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider6 grid
+W2D1 = Frame(W2F2, borderwidth=5, bg="grey", relief="ridge", width=141, height=4) #Divider1
+W2D1.grid(row=2, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider1 grid
+W2D2 = Frame(W2F2, borderwidth=5, bg="grey", relief="ridge", width=141, height=4) #Divider2
+W2D2.grid(row=5, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider2 grid
+W2D3 = Frame(W2F2, borderwidth=5, bg="grey", relief="ridge", width=141, height=4) #Divider3
+W2D3.grid(row=7, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider3 grid
+W2D4 = Frame(W2F2, borderwidth=5, bg="grey", relief="ridge", width=141, height=4) #Divider4
+W2D4.grid(row=9, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider4 grid
+W2D5 = Frame(W2F2, borderwidth=5, bg="grey", relief="ridge", width=141, height=4) #Divider5
+W2D5.grid(row=11, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider5 grid
+W2D6 = Frame(W2F2, borderwidth=5, bg="grey", relief="ridge", width=141, height=4) #Divider6
+W2D6.grid(row=13, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider6 grid
 
 #Window2 Labels
 W2L1 = Label(W2F2, text="Folders").grid(row=6, column=0, columnspan=2)
@@ -403,14 +421,14 @@ W4L6 = Label(W4F2, text="System Halt", font=W4_font).grid(row=1, column=0, colum
 W4L7 = Label(W4F2, text="Space", font=W4_font).grid(row=5, column=0, columnspan=2, sticky=W)
 
 #Divider Frames
-W4F3 = Frame(W4F2, borderwidth=5, bg="grey", relief="ridge", width=95, height=4) #Divider1
-W4F3.grid(row=2, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider1 grid
-W4F4 = Frame(W4F2, borderwidth=5, bg="grey", relief="ridge", width=95, height=4) #Divider2
-W4F4.grid(row=4, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider2 grid
-W4F5 = Frame(W4F2, borderwidth=5, bg="grey", relief="ridge", width=95, height=4) #Divider3
-W4F5.grid(row=6, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider3 grid
-W4F6 = Frame(W4F2, borderwidth=5, bg="grey", relief="ridge", width=95, height=4) #Divider4
-W4F6.grid(row=9, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider4 grid
+W4D1 = Frame(W4F2, borderwidth=5, bg="grey", relief="ridge", width=95, height=4) #Divider1
+W4D1.grid(row=2, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider1 grid
+W4D2 = Frame(W4F2, borderwidth=5, bg="grey", relief="ridge", width=95, height=4) #Divider2
+W4D2.grid(row=4, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider2 grid
+W4D3 = Frame(W4F2, borderwidth=5, bg="grey", relief="ridge", width=95, height=4) #Divider3
+W4D3.grid(row=6, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider3 grid
+W4D4 = Frame(W4F2, borderwidth=5, bg="grey", relief="ridge", width=95, height=4) #Divider4
+W4D4.grid(row=9, column=0, columnspan=150, rowspan=1, sticky=W)  #Divider4 grid
 
 #Window4 Variables
 cputemp = StringVar()
