@@ -28,7 +28,10 @@ gpio.setmode(gpio.BCM)
 gpio.setup(27, gpio.OUT) # relay 2
 gpio.setup(22, gpio.OUT) # relay 3
 gpio.setup(23, gpio.OUT) # relay 4
-gpio.setup(24, gpio.OUT) # relay 4
+gpio.setup(24, gpio.OUT) # relay 5
+gpio.setup(25, gpio.OUT) # relay 6
+gpio.setup(5, gpio.OUT)  # relay 7
+gpio.setup(6, gpio.OUT)  # relay 8
 gpio.setwarnings(False)
 
 #set relay gpio's to true
@@ -37,6 +40,9 @@ gpio.output(27, True) # relay 2
 gpio.output(22, True) # relay 3
 gpio.output(23, True) # relay 4
 gpio.output(24, True) # relay 5
+gpio.output(25, True) # relay 6
+gpio.output(5, True)  # relay 7
+gpio.output(6, True)  # relay 8
 
 #relay ch1 used for CPU Fan
 
@@ -168,7 +174,7 @@ B5.grid(row=0, column=7, sticky=NW)
 #Window1 Frames
 W1F1 = Frame(window1, borderwidth=5, relief="ridge", width=250, height=370) # Manual frame
 W1F1.grid(row=1, column=1, sticky=NW) # Manual frame grid
-W1F2 = Frame(window1, borderwidth=5, relief="ridge", width=250, height=370) # Alarm frame
+W1F2 = Frame(window1, borderwidth=5, relief="ridge", width=135, height=370) # Alarm frame
 W1F2.grid(row=1, column=2, sticky=NW) # Alarm frame grid
 
 #Prevent Frames from resizing
@@ -180,13 +186,20 @@ W1_font = ("helvetica", 10, "bold")
 W1L1 = Label(W1F1, text="Manual Controls", font= W1_font).grid(row=1, column=0, columnspan=2, sticky=W)
 W1L2 = Label(W1F1, text="Door Locks:", font= W1_font).grid(row=3, column=0, columnspan=2, sticky=W)
 W1L3 = Label(W1F1, text="Vehicle Start:", font= W1_font).grid(row=6, column=0, columnspan=2, sticky=W)
-W1L4 = Label(W1F2, text="Alarm Diagnostics:", font= W1_font).grid(row=1, column=0, columnspan=2, sticky=W)
+W1L4 = Label(W1F2, text="Alarm Functions:", font= W1_font).grid(row=1, column=0, columnspan=2, sticky=W)
+W1L5 = Label(W1F2, text="Horn On/Off:", font= W1_font).grid(row=3, column=0, columnspan=2, sticky=W)
+W1L6 = Label(W1F2, text="Piezo On/Off:", font= W1_font).grid(row=6, column=0, columnspan=2, sticky=W)
+W1L7 = Label(W1F2, text="Lights On/Off", font= W1_font).grid(row=9, column=0, columnspan=2, sticky=W)
 
 #Window1 Dividers
 W1D1 = Frame(W1F1, borderwidth=5, bg="grey", relief="ridge", width=238, height=4) #Divider1
 W1D1.grid(row=2, column=0, columnspan=100, rowspan=1, sticky=W)  #Divider1 grid
-W1D2 = Frame(W1F2, borderwidth=5, bg="grey", relief="ridge", width=238, height=4) #Divider1
-W1D2.grid(row=2, column=0, columnspan=100, rowspan=1, sticky=W)  #Divider1 grid
+W1D2 = Frame(W1F1, borderwidth=5, bg="grey", relief="ridge", width=238, height=4) #Divider2
+W1D2.grid(row=9, column=0, columnspan=100, rowspan=1, sticky=W)  #Divider2 grid
+W1D3 = Frame(W1F2, borderwidth=5, bg="grey", relief="ridge", width=125, height=4) #Divider3
+W1D3.grid(row=2, column=0, columnspan=100, rowspan=1, sticky=W)  #Divider3 grid
+W1D4 = Frame(W1F2, borderwidth=5, bg="grey", relief="ridge", width=125, height=4) #Divider4
+W1D4.grid(row=12, column=0, columnspan=100, rowspan=1, sticky=W)  #Divider4 grid
 
 #Indicator Frames
 W1F4 = Frame(W1F1, borderwidth=3, bg="green", relief="ridge", width=118, height=25) # Door lock frame
@@ -197,6 +210,12 @@ W1F6 = Frame(W1F1, borderwidth=3, bg="green", relief="ridge", width=118, height=
 W1F6.grid(row=7, column=0, columnspan=1, rowspan=1, sticky=W) # Vehicle start grid
 W1F7 = Frame(W1F1, borderwidth=3, bg="green", relief="ridge", width=118, height=25) # Vehicle stop frame
 W1F7.grid(row=7, column=1, columnspan=1, rowspan=1, sticky=W) # vehicle stop grid
+W1F8 = Frame(W1F2, borderwidth=3, bg="green", relief="ridge", width=118, height=25) # Vehicle horn frame
+W1F8.grid(row=4, column=1, columnspan=1, rowspan=1, sticky=W) # vehicle horn grid
+W1F9 = Frame(W1F2, borderwidth=3, bg="green", relief="ridge", width=118, height=25) # Vehicle horn frame
+W1F9.grid(row=7, column=1, columnspan=1, rowspan=1, sticky=W) # vehicle horn grid
+W1F10 = Frame(W1F2, borderwidth=3, bg="green", relief="ridge", width=118, height=25) # Vehicle horn frame
+W1F10.grid(row=10, column=1, columnspan=1, rowspan=1, sticky=W) # vehicle horn grid
 
 #Window1 Buttons
 #Door Lock/Unlock
@@ -260,6 +279,56 @@ W1B4=Button(W1F1, text="Stop", font= W1_font, width=12, height=3)
 W1B4.grid(row=8, column=1, sticky=NW)
 W1B4.bind("<ButtonPress>", Car_Stop_Press)
 W1B4.bind("<ButtonRelease>", Car_Stop_Release)
+
+# Alarm Function Test
+# Horn
+def Horn_Press(event):
+    relay_ch6_on()
+    W1F8.config(bg = "red")
+    print ("Horn press")
+
+def Horn_Release(event):
+    relay_ch6_off()
+    W1F8.config(bg = "green")
+    print ("Horn release")    
+    
+W1B5=Button(W1F2, text="Horn", font= W1_font, width=12, height=3)
+W1B5.grid(row=5, column=1, sticky=NW)
+W1B5.bind("<ButtonPress>", Horn_Press)
+W1B5.bind("<ButtonRelease>", Horn_Release)
+
+#Piezo
+def Piezo_Press(event):
+    relay_ch7_on()
+    W1F9.config(bg = "red")
+    print ("Piezo press")
+
+def Piezo_Release(event):
+    relay_ch7_off()
+    W1F9.config(bg = "green")
+    print ("Piezo release")    
+    
+W1B6=Button(W1F2, text="Piezo", font= W1_font, width=12, height=3)
+W1B6.grid(row=8, column=1, sticky=NW)
+W1B6.bind("<ButtonPress>", Piezo_Press)
+W1B6.bind("<ButtonRelease>", Piezo_Release)
+
+#Lights
+def Lights_Press(event):
+    relay_ch8_on()
+    W1F10.config(bg = "red")
+    print ("Lights press")
+
+def Lights_Release(event):
+    relay_ch8_off()
+    W1F10.config(bg = "green")
+    print ("lights release")    
+    
+W1B7=Button(W1F2, text="Lights", font= W1_font, width=12, height=3)
+W1B7.grid(row=11, column=1, sticky=NW)
+W1B7.bind("<ButtonPress>", Lights_Press)
+W1B7.bind("<ButtonRelease>", Lights_Release)
+
 
 #---Camera---Window2 Layout---#
 #-----------------------------#
