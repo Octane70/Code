@@ -10,12 +10,15 @@ import time
 #Control GPIO's
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-#Doord Lock/Unlock
+#Door Lock
 GPIO.setup(17,GPIO.OUT) 
-GPIO.output(17,False)
-#Lights On/Off
+GPIO.output(17,True)
+#Door Unlock
 GPIO.setup(22,GPIO.OUT) 
 GPIO.output(22,True)
+#Lights On/Off
+GPIO.setup(23,GPIO.OUT) 
+GPIO.output(23,True)
 #Auto Start/Stop
 GPIO.setup(27,GPIO.OUT) 
 GPIO.output(27,True)
@@ -41,31 +44,33 @@ def control_mode(command):
     
     #Doors Lock
     if command == "1":
-         rouge2_motors.Forward()
+         GPIO.output(17, False)
     elif command == "2":
-         rouge2_motors.Stop()
+         GPIO.output(17, True)
 
     #Doors Unlock
     elif command == "3":
-         rouge2_motors.Reverse()
+         GPIO.output(22, False)
     elif command == "4":
-         rouge2_motors.Stop()
+         GPIO.output(22, True)
 
-    #Dpad Left
+    #Light Switch
     elif command == "5":
-         rouge2_motors.Left()
+         GPIO.output(23, False)
     elif command == "6":
-         rouge2_motors.Stop()
+         GPIO.output(23, True)
 
     #Auto Start/Stop
     elif command == "7":
-         rouge2_motors.Right()
+         GPIO.output(27, False)
     elif command == "8":
-         rouge2_motors.Stop()
+         GPIO.output(27, True)
 
 BluetoothServer(data_received)
         
 #except KeyboardInterrupt:
-GPIO.output(16, True)
-GPIO.output(26, True)
-GPIO.cleanup()
+#GPIO.output(17, True)
+#GPIO.output(22, True)
+#GPIO.output(23, True)
+#GPIO.output(27, True)
+
