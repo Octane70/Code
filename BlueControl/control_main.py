@@ -54,17 +54,20 @@ def control_mode(command):
     elif command == "4":
          GPIO.output(22, True)
 
-    #Light Switch
+    #Light Bar off    
     elif command == "5":
-         GPIO.output(23, False)
+         GPIO.output(23, True)     
+
+    #Light Bar On
     elif command == "6":
-         GPIO.output(23, True)
+         GPIO.output(23, False)
 
     #Auto Start/Stop
     elif command == "7":
          GPIO.output(27, False)
     elif command == "8":
          GPIO.output(27, True)
+
 
 BluetoothServer(data_received)
         
