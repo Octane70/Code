@@ -48,10 +48,15 @@ IP = subprocess.check_output(cmd, shell = True )
 #Globals
 auto_process = None
 volume = alsaaudio.Mixer('PCM')
-mp3_file = ('sounds/R2D2-yeah.mp3')
-#sound = off
 #vol = m.getvolume()
 vol = 100
+
+#Sound files
+mp3_file1 = ('sounds/R2D2-yeah.mp3')
+mp3_file2 = ('sounds/beverly_hills_cop.mp3')
+mp3_online = ('sounds/onlinef.mp3')
+
+subprocess.Popen(["mpg123",mp3_online])
 
 #Auto mode on and off functions
 def rouge2_auto_on():
@@ -73,7 +78,8 @@ def data_received(data):
     manual_mode(data)
     shutdown(data)
     vol_ctrl(data)
-    sound_ctrl(data) 
+    sound_ctrl(data)
+    camera(data) 
 
 #Auto and manual buttons
 def auto_manual(command):
@@ -99,9 +105,8 @@ def shutdown(command):
 
 #Sound effect on and off
 def sound_ctrl(command):
-   # global sound
     if command == "13":
-       subprocess.Popen(["mpg123",mp3_file])
+       subprocess.Popen(["mpg123",mp3_file2])
        print ("Sound on")
     elif command == "14":
        subprocess.call(['killall', 'mpg123'])
@@ -152,6 +157,11 @@ def manual_mode(command):
          rouge2_motors.Right()
     elif command == "8":
          rouge2_motors.Stop()
+
+#capture picture
+def camera (command):
+    if command == "18":
+       subprocess.Popen(["python3","camera.py"])
 
 BluetoothServer(data_received)
 
@@ -208,6 +218,8 @@ try:
          disp.image(image)
          disp.display()
          time.sleep(.1)
+
+#confirmation()
 
 except KeyboardInterrupt:
        GPIO.output(16, True)
