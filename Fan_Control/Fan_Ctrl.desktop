@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Application
+Name=Fan_Ctrl
+Comment= Start and stop room fan based on temperature
+Exec= sudo python3 /home/pi/fan/fan_ctrl_v0.5.py
+StartupNotify=false
+Terminal=true
+Hidden=false
